@@ -33,8 +33,6 @@ package fr.insalyon.creatis.vip.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.insalyon.creatis.vip.api.business.VipConfigurer;
-import org.keycloak.adapters.springsecurity.client.KeycloakClientRequestFactory;
-import org.keycloak.adapters.springsecurity.client.KeycloakRestTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -75,12 +73,6 @@ public class SpringWebConfig implements WebMvcConfigurer {
     public SpringWebConfig(Environment env, VipConfigurer vipConfigurer) {
         this.env = env;
         this.vipConfigurer = vipConfigurer;
-    }
-
-    //implements rest template to send requests with tokens
-    @Bean
-    public KeycloakRestTemplate keycloakRestTemplate(KeycloakClientRequestFactory keycloakClientRequestFactory) {
-        return new KeycloakRestTemplate(keycloakClientRequestFactory);
     }
 
     @Override
