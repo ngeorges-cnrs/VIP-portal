@@ -36,29 +36,20 @@ import fr.insalyon.creatis.vip.api.CarminProperties;
 import fr.insalyon.creatis.vip.api.security.apikey.SpringApiPrincipal;
 import fr.insalyon.creatis.vip.api.security.apikey.ApikeyAuthenticationFilter;
 import fr.insalyon.creatis.vip.api.security.apikey.ApikeyAuthenticationProvider;
-import fr.insalyon.creatis.vip.api.security.keycloak.SpringKeycloakPrincipal;
-import fr.insalyon.creatis.vip.api.security.keycloak.VipKeycloakAuthenticationProvider;
 import fr.insalyon.creatis.vip.core.client.bean.User;
 
-import org.keycloak.adapters.springsecurity.KeycloakConfiguration;
-import org.keycloak.adapters.springsecurity.KeycloakSecurityComponents;
-import org.keycloak.adapters.springsecurity.authentication.KeycloakAuthenticationProvider;
-import org.keycloak.adapters.springsecurity.config.KeycloakWebSecurityConfigurerAdapter;
-
-import org.keycloak.adapters.springsecurity.filter.KeycloakAuthenticationProcessingFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
 
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
 import org.springframework.security.core.authority.mapping.SimpleAuthorityMapper;
@@ -75,79 +66,41 @@ import java.util.function.Supplier;
 import static fr.insalyon.creatis.vip.api.CarminProperties.KEYCLOAK_ACTIVATED;
 
 /**
- * Keycloaksecurity configuration.
+ * VIP API configuration for apikey and OIDC authentications.
  *
- * It secures by api key all rest requests (except platform and authenticate)
- *
- * Modified by khalilkes to implement keycloak adapter
- *
+ * Authenticates /rest requests with an API key or an OIDC Bearer token.
+ * This is a temporary stub with org.keycloak removed, and OIDC not there yet,
+ * so only apikey auth is supported here.
  */
-@ComponentScan(basePackageClasses = {KeycloakSecurityComponents.class})
-@KeycloakConfiguration
+
 @EnableWebSecurity
 @Order(1)
-public class ApiSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
-
+public class ApiSecurityConfig extends WebSecurityConfigurerAdapter {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private final Environment env;
     private final ApikeyAuthenticationProvider apikeyAuthenticationProvider;
     private final VipAuthenticationEntryPoint vipAuthenticationEntryPoint;
-    private final VipKeycloakAuthenticationProvider vipKeycloakAuthenticationProvider;
 
     @Autowired
     public ApiSecurityConfig(
             Environment env, ApikeyAuthenticationProvider apikeyAuthenticationProvider,
-            VipAuthenticationEntryPoint vipAuthenticationEntryPoint,
-            VipKeycloakAuthenticationProvider vipKeycloakAuthenticationProvider) {
+            VipAuthenticationEntryPoint vipAuthenticationEntryPoint) {
+        logger.info("XXX in ApiSecurityConfig constructor: " + vipAuthenticationEntryPoint);
         this.env = env;
         this.apikeyAuthenticationProvider = apikeyAuthenticationProvider;
         this.vipAuthenticationEntryPoint = vipAuthenticationEntryPoint;
-        this.vipKeycloakAuthenticationProvider = vipKeycloakAuthenticationProvider;
-    }
-
-    protected boolean isKeycloakActive() {
-        return env.getProperty(KEYCLOAK_ACTIVATED, Boolean.class, Boolean.FALSE);
-    }
-
-    @Override
-    protected SessionAuthenticationStrategy sessionAuthenticationStrategy() {
-        // required for bearer only applications
-        return new NullAuthenticatedSessionStrategy();
-    }
-
-    @Override
-    protected AuthenticationEntryPoint authenticationEntryPoint() throws Exception {
-        return vipAuthenticationEntryPoint;
-    }
-
-    @Override
-    protected KeycloakAuthenticationProcessingFilter keycloakAuthenticationProcessingFilter() throws Exception {
-        KeycloakAuthenticationProcessingFilter f = super.keycloakAuthenticationProcessingFilter();
-        f.setAuthenticationFailureHandler(vipAuthenticationEntryPoint);
-        return f;
-    }
-
-    @Override
-    protected KeycloakAuthenticationProvider keycloakAuthenticationProvider() {
-        return vipKeycloakAuthenticationProvider;
     }
 
     @Override
     public void configure(AuthenticationManagerBuilder auth) {
-        if (isKeycloakActive()) {
-            KeycloakAuthenticationProvider keycloakAuthenticationProvider = keycloakAuthenticationProvider();
-            keycloakAuthenticationProvider.setGrantedAuthoritiesMapper(grantedAuthoritiesMapper());
-            auth.authenticationProvider(keycloakAuthenticationProvider);
-        }
+        // XXX if(keycloakactive) { ... }
         auth.authenticationProvider(apikeyAuthenticationProvider);
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        if (isKeycloakActive()) {
-            super.configure(http);
-        }
+        logger.info("XXX in ApiSecurityConfig.configure: " + http);
         http.antMatcher("/rest/**")
             .authorizeRequests()
                 .antMatchers("/rest/platform").permitAll()
@@ -189,6 +142,7 @@ public class ApiSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
         public User get() {
             Authentication authentication =
                     SecurityContextHolder.getContext().getAuthentication();
+            logger.info("XXX in ApiSecurityConfig.User.get: " + authentication);
             if (authentication == null) {
                 return null;
             }
@@ -196,7 +150,7 @@ public class ApiSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
             if (user != null) {
                 return user;
             }
-            return getKeycloakUser(authentication);
+            return null; // XXX was getKeycloakUser()
         }
 
         private User getApikeyUser(Authentication authentication) {
@@ -206,15 +160,6 @@ public class ApiSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
             SpringApiPrincipal springCompatibleUser =
                     (SpringApiPrincipal) authentication.getPrincipal();
             return springCompatibleUser.getVipUser();
-        }
-
-        private User getKeycloakUser(Authentication authentication) {
-            if ( ! (authentication.getPrincipal() instanceof SpringKeycloakPrincipal)) {
-                return null;
-            }
-            SpringKeycloakPrincipal springKeycloakPrincipal =
-                    (SpringKeycloakPrincipal) authentication.getPrincipal();
-            return springKeycloakPrincipal.getVipUser();
         }
     }
 
@@ -238,6 +183,4 @@ public class ApiSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
         mapper.setConvertToUpperCase(true);
         return mapper;
     }
-
-
 }

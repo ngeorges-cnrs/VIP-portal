@@ -34,11 +34,9 @@ package fr.insalyon.creatis.vip.api.security;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.insalyon.creatis.vip.api.exception.ApiException.ApiError;
 import fr.insalyon.creatis.vip.api.model.ErrorCodeAndMessage;
-import org.keycloak.adapters.springsecurity.KeycloakAuthenticationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.AuthenticationException;
@@ -85,8 +83,6 @@ public class VipAuthenticationEntryPoint implements AuthenticationEntryPoint, Au
             error.setErrorCode(ApiError.BAD_CREDENTIALS.getCode());
         } else if (authException instanceof InsufficientAuthenticationException) {
             error.setErrorCode(ApiError.INSUFFICIENT_AUTH.getCode());
-        } else if (authException instanceof KeycloakAuthenticationException) {
-            error.setErrorCode(ApiError.BAD_CREDENTIALS.getCode());
         } else {
             error.setErrorCode(ApiError.AUTHENTICATION_ERROR.getCode());
         }
