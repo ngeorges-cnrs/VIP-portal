@@ -38,6 +38,9 @@ import fr.insalyon.creatis.vip.api.security.apikey.ApikeyAuthenticationFilter;
 import fr.insalyon.creatis.vip.api.security.apikey.ApikeyAuthenticationProvider;
 import fr.insalyon.creatis.vip.core.client.bean.User;
 
+import fr.insalyon.creatis.vip.api.security.oidc.OIDCAuthenticationFilter;
+import fr.insalyon.creatis.vip.api.security.oidc.OIDCAuthenticationProvider;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,21 +83,31 @@ public class ApiSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final Environment env;
     private final ApikeyAuthenticationProvider apikeyAuthenticationProvider;
+    private final OIDCAuthenticationProvider oidcAuthenticationProvider;
     private final VipAuthenticationEntryPoint vipAuthenticationEntryPoint;
 
     @Autowired
     public ApiSecurityConfig(
             Environment env, ApikeyAuthenticationProvider apikeyAuthenticationProvider,
+            OIDCAuthenticationProvider oidcAuthenticationProvider,
             VipAuthenticationEntryPoint vipAuthenticationEntryPoint) {
-        logger.info("XXX in ApiSecurityConfig constructor: " + vipAuthenticationEntryPoint);
         this.env = env;
         this.apikeyAuthenticationProvider = apikeyAuthenticationProvider;
+        this.oidcAuthenticationProvider = oidcAuthenticationProvider;
         this.vipAuthenticationEntryPoint = vipAuthenticationEntryPoint;
+    }
+
+    protected boolean isOIDCActive() {
+        return env.getProperty(KEYCLOAK_ACTIVATED, Boolean.class, Boolean.FALSE);
     }
 
     @Override
     public void configure(AuthenticationManagerBuilder auth) {
-        // XXX if(keycloakactive) { ... }
+        logger.info("XXX configure AuthenticationManagerBuilder");
+        if (isOIDCActive()) {
+            logger.info("XXX isOIDCActive=true, adding authprovider " + oidcAuthenticationProvider);
+            auth.authenticationProvider(oidcAuthenticationProvider);
+        }
         auth.authenticationProvider(apikeyAuthenticationProvider);
     }
 
@@ -117,6 +130,7 @@ public class ApiSecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().permitAll()
             .and()
             .addFilterBefore(apikeyAuthenticationFilter(), BasicAuthenticationFilter.class)
+            .addFilterBefore(oidcAuthenticationFilter(), BasicAuthenticationFilter.class)
             .exceptionHandling().authenticationEntryPoint(vipAuthenticationEntryPoint)// also done in parent but needed here when keycloak is not active. It can be done twice without harm.
             // session must be activated otherwise OIDC auth info will be lost when accessing /loginEgi
             //.and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -131,6 +145,11 @@ public class ApiSecurityConfig extends WebSecurityConfigurerAdapter {
         return new ApikeyAuthenticationFilter(
                 env.getRequiredProperty(CarminProperties.APIKEY_HEADER_NAME),
                 vipAuthenticationEntryPoint, authenticationManager());
+    }
+
+    @Bean
+    public OIDCAuthenticationFilter oidcAuthenticationFilter() throws Exception {
+        return new OIDCAuthenticationFilter(vipAuthenticationEntryPoint, authenticationManager());
     }
 
     @Service
@@ -150,7 +169,7 @@ public class ApiSecurityConfig extends WebSecurityConfigurerAdapter {
             if (user != null) {
                 return user;
             }
-            return null; // XXX was getKeycloakUser()
+            return null; // XXX was getKeycloakUser() => getOIDCUser() ?
         }
 
         private User getApikeyUser(Authentication authentication) {
