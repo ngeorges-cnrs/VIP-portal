@@ -56,6 +56,9 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.helpers.XMLReaderFactory;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParserFactory;
+
 /**
  * Parse a m2 input file.
  *
@@ -93,13 +96,13 @@ public class InputM2Parser extends DefaultHandler {
             throws BusinessException {
 
         try {
-            XMLReader reader = XMLReaderFactory.createXMLReader();
+            XMLReader reader = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
             reader.setContentHandler(this);
             reader.parse(new InputSource(new FileReader(fileName)));
 
             return inputs;
 
-        } catch (IOException | SAXException ex) {
+        } catch (IOException | SAXException |ParserConfigurationException ex) {
             logger.error("Error parsing {}", fileName, ex);
             throw new BusinessException(ex);
         }
