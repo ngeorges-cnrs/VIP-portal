@@ -96,13 +96,15 @@ public class InputM2Parser extends DefaultHandler {
             throws BusinessException {
 
         try {
-            XMLReader reader = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
+            SAXParserFactory parserFactory = SAXParserFactory.newInstance();
+            parserFactory.setNamespaceAware(true);
+            XMLReader reader = parserFactory.newSAXParser().getXMLReader();
             reader.setContentHandler(this);
             reader.parse(new InputSource(new FileReader(fileName)));
 
             return inputs;
 
-        } catch (IOException | SAXException |ParserConfigurationException ex) {
+        } catch (IOException | SAXException | ParserConfigurationException ex) {
             logger.error("Error parsing {}", fileName, ex);
             throw new BusinessException(ex);
         }

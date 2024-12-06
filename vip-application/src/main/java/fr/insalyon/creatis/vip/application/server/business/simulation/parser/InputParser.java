@@ -72,7 +72,9 @@ public class InputParser extends DefaultHandler {
 
     public String parse(String fileName) throws BusinessException {
         try {
-            reader = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
+            SAXParserFactory parserFactory = SAXParserFactory.newInstance();
+            parserFactory.setNamespaceAware(true);
+            reader = parserFactory.newSAXParser().getXMLReader();
             reader.setContentHandler(this);
             reader.parse(new InputSource(new FileReader(fileName)));
 
