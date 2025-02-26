@@ -99,6 +99,8 @@ public class LfcPathsBusiness {
 
         if (baseDir.startsWith("lfn://")) {
             baseDir = URI.create(baseDir).getPath();
+        } else if (baseDir.startsWith("file:")) {
+            baseDir = baseDir.substring(5,  baseDir.length());
         }
 
         baseDir = replaceLfnUserPrefix(
