@@ -97,7 +97,6 @@ public class TagIT extends BaseSpringIT {
 
         assertEquals(appVersion.getApplicationName(), tagBusiness.getAssociated(tag).get(0).getApplicationName());
         assertEquals(appVersion.getVersion(), tagBusiness.getAssociated(tag).get(0).getVersion());
-        assertEquals(appVersion.getLfn(), tagBusiness.getAssociated(tag).get(0).getLfn());
         assertEquals(tag.getName(), tagBusiness.getTags(appVersion).get(0).getName());
 
         tagBusiness.dissociate(tag, appVersion);

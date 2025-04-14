@@ -244,7 +244,6 @@ public class ApplicationData extends JdbcDaoSupport implements ApplicationDAO {
                 versions.add(new AppVersion(
                         name,
                         rs.getString("version"),
-                        rs.getString("lfn"),
                         rs.getString("json_lfn"),
                         rs.getString("doi"),
                         rs.getBoolean("visible"),
@@ -272,7 +271,6 @@ public class ApplicationData extends JdbcDaoSupport implements ApplicationDAO {
                 versions.add(new AppVersion(
                         rs.getString("application"),
                         rs.getString("version"),
-                        rs.getString("lfn"),
                         rs.getString("json_lfn"),
                         rs.getString("doi"),
                         rs.getBoolean("visible"),
@@ -294,7 +292,7 @@ public class ApplicationData extends JdbcDaoSupport implements ApplicationDAO {
         try (PreparedStatement ps = getConnection().prepareStatement(query)) {
             ps.setString(1, version.getApplicationName());
             ps.setString(2, version.getVersion());
-            ps.setString(3, version.getLfn());
+            ps.setString(3, ""); // XXX remove field ?
             ps.setString(4, version.getJsonLfn());
             ps.setBoolean(5, version.isVisible());
             ps.setBoolean(6, version.isBoutiquesForm());
@@ -318,7 +316,7 @@ public class ApplicationData extends JdbcDaoSupport implements ApplicationDAO {
         +               "WHERE application=? AND version=?";
 
         try (PreparedStatement ps = getConnection().prepareStatement(query)) {
-            ps.setString(1, version.getLfn());
+            ps.setString(1, ""); // XXX remove field ?
             ps.setString(2, version.getJsonLfn());
             ps.setBoolean(3, version.isVisible());
             ps.setBoolean(4, version.isBoutiquesForm());
@@ -377,7 +375,6 @@ public class ApplicationData extends JdbcDaoSupport implements ApplicationDAO {
             if (rs.first()) {
                 return new AppVersion(rs.getString("application"),
                         rs.getString("version"),
-                        rs.getString("lfn"),
                         rs.getString("json_lfn"),
                         rs.getString("doi"),
                         rs.getBoolean("visible"),

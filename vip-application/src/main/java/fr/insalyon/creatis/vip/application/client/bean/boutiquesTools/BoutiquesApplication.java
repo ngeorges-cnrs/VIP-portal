@@ -206,28 +206,12 @@ public class BoutiquesApplication implements IsSerializable {
         return applicationLFN;
     }
 
-    public String getWrapperLFN() {
-        return this.applicationLFN + "/bin/" + getName() + ".sh";
-    }
-
-    public String getWrapperName() {
-        return getName() + ".sh";
-    }
-
-    public String getGASWLFN() {
-        return this.applicationLFN + "/gasw/" + getName() + ".xml";
-    }
-
-    public String getGwendiaLFN() {
-        return this.applicationLFN + "/workflow/" + getName() + ".gwendia";
-    }
-
     public Map<String, String> getTags() {
         return tags;
     }
 
     public String getJsonLFN() {
-        return this.applicationLFN + "/json/" + getName() + ".json";
+        return this.applicationLFN + "/" + getName() + ".json";
     }
 
     public String getVipContainer() {

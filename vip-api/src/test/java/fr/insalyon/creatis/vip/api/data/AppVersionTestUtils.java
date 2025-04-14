@@ -52,7 +52,6 @@ public class AppVersionTestUtils {
         return new AppVersion(
                 app.getName(),
                 base.getVersion(),
-                base.getLfn(),
                 base.getJsonLfn(),
                 base.isVisible(),
                 base.isBoutiquesForm());

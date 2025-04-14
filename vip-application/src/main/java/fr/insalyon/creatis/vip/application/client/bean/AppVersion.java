@@ -44,7 +44,6 @@ public class AppVersion implements IsSerializable {
 
     private String applicationName;
     private String version;
-    private String lfn;
     private String jsonLfn;
     private String doi;
     private boolean visible;;
@@ -56,11 +55,10 @@ public class AppVersion implements IsSerializable {
     }
 
     public AppVersion(
-            String applicationName, String version, String lfn, String jsonLfn, boolean visible,
+            String applicationName, String version, String jsonLfn, boolean visible,
             boolean boutiquesForm) {
         this.applicationName = applicationName;
         this.version = version;
-        this.lfn = lfn;
         this.jsonLfn = jsonLfn;
         this.visible = visible;
         this.boutiquesForm = boutiquesForm;
@@ -69,16 +67,16 @@ public class AppVersion implements IsSerializable {
     }
 
     public AppVersion(
-            String applicationName, String version, String lfn, String jsonLfn, String doi, boolean visible,
+            String applicationName, String version, String jsonLfn, String doi, boolean visible,
             boolean boutiquesForm) {
-        this(applicationName, version, lfn, jsonLfn, visible, boutiquesForm);
+        this(applicationName, version, jsonLfn, visible, boutiquesForm);
         this.doi = doi;
     }
 
     public AppVersion(
-            String applicationName, String version, String lfn, String jsonLfn, String doi, boolean visible,
+            String applicationName, String version, String jsonLfn, String doi, boolean visible,
             boolean boutiquesForm, List<String> resources, List<String> tags) {
-        this(applicationName, version, lfn, jsonLfn, visible, boutiquesForm);
+        this(applicationName, version, jsonLfn, visible, boutiquesForm);
         this.doi = doi;
         this.resources = resources;
         this.tags = tags;
@@ -95,10 +93,6 @@ public class AppVersion implements IsSerializable {
 
     public String getVersion() {
         return version;
-    }
-
-    public String getLfn() {
-        return lfn;
     }
 
     public String getJsonLfn() {

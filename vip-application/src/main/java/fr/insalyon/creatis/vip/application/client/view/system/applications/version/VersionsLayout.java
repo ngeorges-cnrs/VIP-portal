@@ -207,7 +207,7 @@ public class VersionsLayout extends VLayout {
                 List<VersionRecord> dataList = new ArrayList<VersionRecord>();
 
                 for (AppVersion version : result) {
-                    dataList.add(new VersionRecord(version.getVersion(), version.getLfn(), version.getJsonLfn(),
+                    dataList.add(new VersionRecord(version.getVersion(), version.getJsonLfn(),
                             version.getDoi(), version.isVisible(), version.isBoutiquesForm(), version.getTags(), version.getResources()));
                 }
                 grid.setData(dataList.toArray(new VersionRecord[]{}));

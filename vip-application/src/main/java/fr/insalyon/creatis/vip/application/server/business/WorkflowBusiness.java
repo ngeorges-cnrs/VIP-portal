@@ -167,7 +167,7 @@ public class WorkflowBusiness {
 
             List<ParameterSweep> parameters = getParameters(parametersMap, user, groups);
             AppVersion appVersion = appVersionBusiness.getVersion(appName, version);
-            String workflowPath = dataManagerBusiness.getRemoteFile(user, server.useMoteurlite() ? appVersion.getJsonLfn() : appVersion.getLfn());
+            String workflowPath = dataManagerBusiness.getRemoteFile(user, server.useMoteurlite() ? appVersion.getJsonLfn() : "XXX/nofile");
             logger.info( "Moteurlite status: " + server.useMoteurlite());
 
             List<Resource> resources = resourceBusiness.getUsableResources(user, appVersion);
@@ -398,17 +398,13 @@ public class WorkflowBusiness {
 
         try {
             AppVersion version = applicationDAO.getVersion(applicationName, applicationVersion);
-            String workflowPath = dataManagerBusiness.getRemoteFile(user, version.getLfn());
-            if ( ! workflowPath.endsWith(".gwendia")) {
-                logger.error("Error : workflow file without gwendia extension : {}", workflowPath);
-                throw new BusinessException(WRONG_APPLICATION_DESCRIPTOR, applicationName + "/" + applicationVersion);
-            }
+            String workflowPath = "/XXX_not_found.gwendia";
             return getGwendiaParser().parse(workflowPath);
 
         } catch (SAXException | ParserConfigurationException | IOException ex) {
             logger.error("Error getting application descriptor for {}/{}", applicationName, applicationVersion, ex);
             throw new BusinessException(WRONG_APPLICATION_DESCRIPTOR, ex, applicationName + "/" + applicationVersion);
-        } catch (DAOException | BusinessException ex) {
+        } catch (DAOException ex) {
             throw new BusinessException(WRONG_APPLICATION_DESCRIPTOR, ex, applicationName + "/" + applicationVersion);
         }
     }

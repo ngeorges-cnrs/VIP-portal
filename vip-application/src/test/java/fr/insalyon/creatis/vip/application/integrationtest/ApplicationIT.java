@@ -137,9 +137,9 @@ public class ApplicationIT extends BaseSpringIT {
 
     @Test
     public void testUpdateVersionApplication() throws BusinessException {
-        AppVersion appVersion = new AppVersion("Application1", "version 0.0", "lfn updated", "jsonLfn", true, true);
+        AppVersion appVersion = new AppVersion("Application1", "version 0.0", "lfn updated", true, true);
         appVersionBusiness.update(appVersion);
-        Assertions.assertEquals("lfn updated", appVersionBusiness.getVersions("Application1").get(0).getLfn(), "Incorrect lfn updated");
+        Assertions.assertEquals("lfn updated", appVersionBusiness.getVersions("Application1").get(0).getJsonLfn(), "Incorrect lfn updated");
     }
 
     @Test 

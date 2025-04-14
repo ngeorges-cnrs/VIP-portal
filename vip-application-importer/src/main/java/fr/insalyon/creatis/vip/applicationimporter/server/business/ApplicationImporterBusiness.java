@@ -58,7 +58,6 @@ import java.io.*;
 import java.util.*;
 
 /**
- *
  * @author Tristan Glatard
  */
 @Service
@@ -111,7 +110,7 @@ public class ApplicationImporterBusiness {
     }
 
     public void createApplication(BoutiquesApplication bt, boolean overwriteApplicationVersion,
-        List<String> tags, List<String> resources, User user)
+                                  List<String> tags, List<String> resources, User user)
             throws BusinessException {
 
         try {
@@ -119,18 +118,18 @@ public class ApplicationImporterBusiness {
             checkEditionRights(bt.getName(), bt.getToolVersion(), overwriteApplicationVersion, user);
             // set the correct LFN - XXX obsolete ?
             bt.setApplicationLFN(
-                lfcPathsBusiness.parseBaseDir(
-                    user, bt.getApplicationLFN()).concat("/").concat(bt.getToolVersion().replaceAll("\\s+","")));
+                    lfcPathsBusiness.parseBaseDir(
+                            user, bt.getApplicationLFN()).concat("/").concat(bt.getToolVersion().replaceAll("\\s+", "")));
 
             // Write application json descriptor - XXX proper path
             String jsonFileName = server.getApplicationImporterFileRepository() + bt.getJsonLFN();
-            writeString(bt.getJsonFile(), jsonFileName);         
-  
+            writeString(bt.getJsonFile(), jsonFileName);
+
             // XXX - Upload the JSON file at the end, so that it is not deleted before adding it as dependency to wrapperArchiveName
             uploadFile(jsonFileName, bt.getJsonLFN());
-        
+
             // Register application
-            registerApplicationVersion(bt.getName(), bt.getToolVersion(), user.getEmail(), bt.getGwendiaLFN(), bt.getJsonLFN(), tags, resources);
+            registerApplicationVersion(bt.getName(), bt.getToolVersion(), user.getEmail(), bt.getJsonLFN(), tags, resources);
 
         } catch (IOException ex) {
             logger.error("Error creating app {}/{} from boutiques file", bt.getName(), bt.getToolVersion(), ex);
@@ -166,12 +165,10 @@ public class ApplicationImporterBusiness {
         writer.close();
     }
 
-    private void registerApplicationVersion(
-            String vipApplicationName, String vipVersion, String owner,
-            String lfnGwendiaFile, String lfnJsonFile,
-            List<String> tags, List<String> resources) throws BusinessException {
+    private void registerApplicationVersion(String vipApplicationName, String vipVersion, String owner, String lfnJsonFile,
+                                            List<String> tags, List<String> resources) throws BusinessException {
         Application app = applicationBusiness.getApplication(vipApplicationName);
-        AppVersion newVersion = new AppVersion(vipApplicationName, vipVersion, lfnGwendiaFile, lfnJsonFile, true, true);
+        AppVersion newVersion = new AppVersion(vipApplicationName, vipVersion, lfnJsonFile, true, true);
         if (app == null) {
             // If application doesn't exist, create it.
             // New applications are not associated with any class (admins may add classes independently).
@@ -211,7 +208,7 @@ public class ApplicationImporterBusiness {
             for (AppVersion v : versions) {
                 if (v.getVersion().equals(vipVersion)) {
                     logger.error("{} tried to overwrite version {} of application {} without setting the overwrite flag.",
-                            user.getEmail(), vipVersion,vipApplicationName);
+                            user.getEmail(), vipVersion, vipApplicationName);
                     throw new BusinessException("Application version already exists.");
                 }
             }
@@ -220,7 +217,7 @@ public class ApplicationImporterBusiness {
 
     private void registerTagsAssociated(AppVersion appVersion, List<String> tags) throws BusinessException {
         for (String tagName : tags) {
-            if ( ! tagBusiness.exist(tagName)) {
+            if (!tagBusiness.exist(tagName)) {
                 tagBusiness.add(new Tag(tagName));
             }
             tagBusiness.associate(new Tag(tagName), appVersion);
