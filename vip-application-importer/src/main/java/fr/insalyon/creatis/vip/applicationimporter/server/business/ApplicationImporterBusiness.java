@@ -71,8 +71,6 @@ public class ApplicationImporterBusiness {
     private LfcPathsBusiness lfcPathsBusiness;
     private GRIDAClient gridaClient;
     private BoutiquesBusiness boutiquesBusiness;
-    private VelocityUtils velocityUtils;
-    private TargzUtils targzUtils;
     private ApplicationBusiness applicationBusiness;
     private AppVersionBusiness appVersionBusiness;
     private DataManagerBusiness dataManagerBusiness;
@@ -83,7 +81,6 @@ public class ApplicationImporterBusiness {
     public ApplicationImporterBusiness(
             Server server, LfcPathsBusiness lfcPathsBusiness,
             GRIDAClient gridaClient, BoutiquesBusiness boutiquesBusiness,
-            VelocityUtils velocityUtils, TargzUtils targzUtils,
             ApplicationBusiness applicationBusiness,
             DataManagerBusiness dataManagerBusiness,
             ResourceBusiness resourceBusiness,
@@ -93,8 +90,6 @@ public class ApplicationImporterBusiness {
         this.lfcPathsBusiness = lfcPathsBusiness;
         this.gridaClient = gridaClient;
         this.boutiquesBusiness = boutiquesBusiness;
-        this.velocityUtils = velocityUtils;
-        this.targzUtils = targzUtils;
         this.applicationBusiness = applicationBusiness;
         this.dataManagerBusiness = dataManagerBusiness;
         this.resourceBusiness = resourceBusiness;
@@ -115,62 +110,23 @@ public class ApplicationImporterBusiness {
         }
     }
 
-    public void createApplication(BoutiquesApplication bt, String tag, boolean overwriteApplicationVersion, String fileAccessProtocol
-        ,List<String> tags, List<String> resources, User user)
+    public void createApplication(BoutiquesApplication bt, boolean overwriteApplicationVersion,
+        List<String> tags, List<String> resources, User user)
             throws BusinessException {
 
         try {
-            String wrapperTemplate = "vm/wrapper.vm";
-            String gaswTemplate = "vm/gasw.vm";
-            String gwendiaTemplate = "vm/gwendia-standalone.vm";
-
             // Check rights
             checkEditionRights(bt.getName(), bt.getToolVersion(), overwriteApplicationVersion, user);
-            // set the correct LFN
+            // set the correct LFN - XXX obsolete ?
             bt.setApplicationLFN(
                 lfcPathsBusiness.parseBaseDir(
                     user, bt.getApplicationLFN()).concat("/").concat(bt.getToolVersion().replaceAll("\\s+","")));
 
-            // Generate strings
-            String gwendiaString = velocityUtils.createDocument(bt, fileAccessProtocol, gwendiaTemplate);
-            String gaswString = velocityUtils.createDocument(tag, bt, fileAccessProtocol, gaswTemplate);
-            String wrapperString = velocityUtils.createDocument(tag, bt, wrapperTemplate);
-
-            // Write files
-            String gwendiaFileName = server.getApplicationImporterFileRepository() + bt.getGwendiaLFN();
-            String gaswFileName = server.getApplicationImporterFileRepository() + bt.getGASWLFN();
-            String wrapperFileName = server.getApplicationImporterFileRepository() + bt.getWrapperLFN();
-
-            System.out.print(gwendiaFileName + "\n");
-            writeString(gwendiaString, gwendiaFileName);
-            uploadFile(gwendiaFileName, bt.getGwendiaLFN());
-            
-            // Write application json descriptor
+            // Write application json descriptor - XXX proper path
             String jsonFileName = server.getApplicationImporterFileRepository() + bt.getJsonLFN();
             writeString(bt.getJsonFile(), jsonFileName);         
   
-            String wrapperArchiveName;
-            // Write files for each GASW and script file
-            writeString(gaswString, gaswFileName);
-            writeString(wrapperString, wrapperFileName);
-            wrapperArchiveName = wrapperFileName + ".tar.gz";
-
-            ArrayList<File> dependencies = new ArrayList<File>();
-            dependencies.add(new File(wrapperFileName));
-            //Add json file to archive so that it is downloaded on WN for Boutiques exec
-            dependencies.add(new File(jsonFileName));
-            targzUtils.createTargz(dependencies, wrapperArchiveName);
-
-            // Transfer files
-            System.out.print("gasw : " + gaswFileName + "\n");
-            System.out.print("gasw : " + bt.getGASWLFN() + "\n");
-            uploadFile(gaswFileName, bt.getGASWLFN());
-            System.out.print("wrapper : " + wrapperFileName + "\n");
-            System.out.print("wrapper : " + bt.getWrapperLFN() + "\n");
-            uploadFile(wrapperFileName, bt.getWrapperLFN());
-
-            uploadFile(wrapperArchiveName, bt.getWrapperLFN() + ".tar.gz");
-            //Upload the JSON file at the end, so that it is not deleted before adding it as dependency to wrapperArchiveName
+            // XXX - Upload the JSON file at the end, so that it is not deleted before adding it as dependency to wrapperArchiveName
             uploadFile(jsonFileName, bt.getJsonLFN());
         
             // Register application
