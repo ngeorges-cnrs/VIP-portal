@@ -167,9 +167,8 @@ public class PipelineController extends ApiController {
             if (app == null) {
                 applicationBusiness.add(new Application(appName, "")); // currentUserProvider.get().getEmail()
             }
-            AppVersion newVersion = new AppVersion(appName, appVersion,
-                    rootFolder + "/" + appName + "_" + appVersion + ".json",
-                    true, true);
+            // XXX TODO rootFolder + "/" + appName + "_" + appVersion + ".json",
+            AppVersion newVersion = new AppVersion(appName, appVersion, true);
             // appVersionBusiness.update(newVersion);
             List<AppVersion> versions = appVersionBusiness.getVersions(appName);
             for (AppVersion existingVersion : versions) {

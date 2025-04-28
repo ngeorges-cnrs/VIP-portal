@@ -76,7 +76,7 @@ public class BoutiquesBusiness {
             throws BusinessException {
 
         // fetch json file
-        String jsonLfn = getJsonLfn(applicationName, version);
+        String jsonLfn = "XXX TODO nofile";
         String localFile = dataManagerBusiness.getRemoteFile(user, jsonLfn);
 
         // TODO : verify it has an author (refactor boutique parser from application-importer
@@ -109,21 +109,10 @@ public class BoutiquesBusiness {
         }
     }
 
-    private String getJsonLfn(String applicationName, String applicationVersion)
-            throws BusinessException {
-        AppVersion appVersion = appVersionBusiness.getVersion(
-            applicationName, applicationVersion);
-        if (appVersion.getJsonLfn() == null) {
-            logger.error("No json lfn for this application : {} / {}", applicationName, applicationVersion);
-            throw new BusinessException("There is no json lfn for this application version.");
-        }
-        return appVersion.getJsonLfn();
-    }
-
     public String getApplicationDescriptorString(
             User user, String applicationName, String applicationVersion)
             throws BusinessException {
-        String descriptorLfn = getJsonLfn(applicationName, applicationVersion);
+        String descriptorLfn = "XXX TODO"; // getJsonLfn(applicationName, applicationVersion);
         try {
             String localFilePath =
                     dataManagerBusiness.getRemoteFile(user, descriptorLfn);

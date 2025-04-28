@@ -241,8 +241,8 @@ public class ReproVipBusiness {
     public String getBoutiquesDescriptorJsonPath(String applicationName, String applicationVersion) throws BusinessException {
         AppVersion appVersion = appVersionBusiness.getVersion(applicationName, applicationVersion);
 
-        if (appVersion != null && appVersion.getJsonLfn() != null) {
-            return appVersion.getJsonLfn();
+        if (appVersion != null) {
+            return "XXX TODO get descriptor";
         } else {
             return null;
         }

@@ -167,7 +167,7 @@ public class WorkflowBusiness {
 
             List<ParameterSweep> parameters = getParameters(parametersMap, user, groups);
             AppVersion appVersion = appVersionBusiness.getVersion(appName, version);
-            String workflowPath = dataManagerBusiness.getRemoteFile(user, server.useMoteurlite() ? appVersion.getJsonLfn() : "XXX/nofile");
+            String workflowPath = "XXX TODO nofile"; //dataManagerBusiness.getRemoteFile(user, server.useMoteurlite() ? appVersion.getJsonLfn() : "XXX/nofile");
             logger.info( "Moteurlite status: " + server.useMoteurlite());
 
             List<Resource> resources = resourceBusiness.getUsableResources(user, appVersion);

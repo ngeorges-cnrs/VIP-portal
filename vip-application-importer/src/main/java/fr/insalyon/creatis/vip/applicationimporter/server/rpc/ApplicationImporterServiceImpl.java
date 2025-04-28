@@ -97,6 +97,7 @@ public class ApplicationImporterServiceImpl extends fr.insalyon.creatis.vip.core
     }
 
     @Override
+    @SuppressWarnings("unchecked") // XXX unchecked cast to List<String> below
     public Map<String, String> getBoutiquesTags(String boutiquesJsonFile) throws ApplicationImporterException {
         try {
             Map<String, String> map = new HashMap<>();
@@ -105,7 +106,7 @@ public class ApplicationImporterServiceImpl extends fr.insalyon.creatis.vip.core
 
             if (descriptor.getTags() != null) {
                 descriptor.getTags().getAdditionalProperties().forEach((k, v) -> {
-                    String valueString = (v instanceof List) 
+                    String valueString = (v instanceof List)
                             ? String.join(",", (List<String>) v) 
                             : String.valueOf(v);
                     map.put(k, valueString);

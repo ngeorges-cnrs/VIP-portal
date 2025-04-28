@@ -164,7 +164,7 @@ public class PipelineBusiness {
     public BoutiquesDescriptor getBoutiquesDescriptor(String pipelineId) throws ApiException {
         AppVersion appVersion = getAppVersionFromPipelineId(pipelineId);
 
-        String boutiquesUri = appVersion.getJsonLfn();
+        String boutiquesUri = "XXX TODO nofile"; // appVersion.getJsonLfn();
         if (boutiquesUri == null || boutiquesUri.isEmpty()) {
             logger.error("boutiques lfn not specified for app {}", pipelineId);
             throw new ApiException(NOT_COMPATIBLE_WITH_BOUTIQUES, pipelineId);

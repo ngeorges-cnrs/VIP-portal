@@ -73,7 +73,7 @@ public class TagIT extends BaseSpringIT {
     public void associate() throws BusinessException {
         Tag bis = new Tag("blou");
         Application app = new Application("test", "super citation");
-        AppVersion appVersion = new AppVersion("test", "0.1", "blink", "blank", false, false);
+        AppVersion appVersion = new AppVersion("test", "0.1", false);
 
         appBusiness.add(app);
         appVersionBusiness.add(appVersion);
@@ -81,7 +81,6 @@ public class TagIT extends BaseSpringIT {
 
         assertEquals(appVersion.getApplicationName(), tagBusiness.getAssociated(tag).get(0).getApplicationName());
         assertEquals(appVersion.getVersion(), tagBusiness.getAssociated(tag).get(0).getVersion());
-        assertEquals(appVersion.getJsonLfn(), tagBusiness.getAssociated(tag).get(0).getJsonLfn());
         assertEquals(tag.getName(), tagBusiness.getTags(appVersion).get(0).getName());
         assertTrue(tagBusiness.getAssociated(bis).isEmpty());
     }
@@ -89,7 +88,7 @@ public class TagIT extends BaseSpringIT {
     @Test
     public void dissociate() throws BusinessException {
         Application app = new Application("test", "super citation");
-        AppVersion appVersion = new AppVersion("test", "0.1", "blink", "blank", false, false);
+        AppVersion appVersion = new AppVersion("test", "0.1", false);
 
         appBusiness.add(app);
         appVersionBusiness.add(appVersion);

@@ -244,10 +244,8 @@ public class ApplicationData extends JdbcDaoSupport implements ApplicationDAO {
                 versions.add(new AppVersion(
                         name,
                         rs.getString("version"),
-                        rs.getString("json_lfn"),
                         rs.getString("doi"),
-                        rs.getBoolean("visible"),
-                        rs.getBoolean("useBoutiquesForm")));
+                        rs.getBoolean("visible")));
             }
             return versions;
 
@@ -271,10 +269,8 @@ public class ApplicationData extends JdbcDaoSupport implements ApplicationDAO {
                 versions.add(new AppVersion(
                         rs.getString("application"),
                         rs.getString("version"),
-                        rs.getString("json_lfn"),
                         rs.getString("doi"),
-                        rs.getBoolean("visible"),
-                        rs.getBoolean("useBoutiquesForm")));
+                        rs.getBoolean("visible")));
             }
             return versions;
 
@@ -286,16 +282,13 @@ public class ApplicationData extends JdbcDaoSupport implements ApplicationDAO {
 
     @Override
     public void addVersion(AppVersion version) throws DAOException {
-        String query =  "INSERT INTO VIPAppVersions(application, version, lfn, json_lfn, visible, useBoutiquesForm) "
-        +               "VALUES (?, ?, ?, ?, ?, ?)";
+        String query =  "INSERT INTO VIPAppVersions(application, version, visible) "
+        +               "VALUES (?, ?, ?)";
 
         try (PreparedStatement ps = getConnection().prepareStatement(query)) {
             ps.setString(1, version.getApplicationName());
             ps.setString(2, version.getVersion());
-            ps.setString(3, ""); // XXX remove field ?
-            ps.setString(4, version.getJsonLfn());
-            ps.setBoolean(5, version.isVisible());
-            ps.setBoolean(6, version.isBoutiquesForm());
+            ps.setBoolean(3, version.isVisible());
             ps.executeUpdate();
 
         } catch (SQLException ex) {
@@ -312,16 +305,13 @@ public class ApplicationData extends JdbcDaoSupport implements ApplicationDAO {
 
     @Override
     public void updateVersion(AppVersion version) throws DAOException {
-        String query =  "UPDATE VIPAppVersions SET lfn=?, json_lfn=?, visible=?, useBoutiquesForm=? "
+        String query =  "UPDATE VIPAppVersions SET visible=? "
         +               "WHERE application=? AND version=?";
 
         try (PreparedStatement ps = getConnection().prepareStatement(query)) {
-            ps.setString(1, ""); // XXX remove field ?
-            ps.setString(2, version.getJsonLfn());
-            ps.setBoolean(3, version.isVisible());
-            ps.setBoolean(4, version.isBoutiquesForm());
-            ps.setString(5, version.getApplicationName());
-            ps.setString(6, version.getVersion());
+            ps.setBoolean(1, version.isVisible());
+            ps.setString(2, version.getApplicationName());
+            ps.setString(3, version.getVersion());
             ps.executeUpdate();
 
         } catch (SQLException ex) {
@@ -375,10 +365,8 @@ public class ApplicationData extends JdbcDaoSupport implements ApplicationDAO {
             if (rs.first()) {
                 return new AppVersion(rs.getString("application"),
                         rs.getString("version"),
-                        rs.getString("json_lfn"),
                         rs.getString("doi"),
-                        rs.getBoolean("visible"),
-                        rs.getBoolean("useBoutiquesForm"));
+                        rs.getBoolean("visible"));
             }
 
             return null;

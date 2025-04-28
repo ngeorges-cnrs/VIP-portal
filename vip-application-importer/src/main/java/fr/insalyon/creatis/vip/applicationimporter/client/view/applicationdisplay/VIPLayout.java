@@ -53,7 +53,6 @@ import java.util.Map;
 
 public class VIPLayout extends AbstractFormLayout {
 
-    private final LocalTextField applicationLocation;
     private final CheckboxItem overwriteIfexists;
     private final SelectItem resourcesList;
 
@@ -62,11 +61,7 @@ public class VIPLayout extends AbstractFormLayout {
         addTitle("Executable", Constants.ICON_EXECUTABLE);
         setOverflow(Overflow.AUTO);
         setMembersMargin(2);
-        
-        // Adds application location
-        applicationLocation = new LocalTextField("Application file location", true, true);
-        setApplicationLocationValue();
-        
+
         overwriteIfexists = new CheckboxItem("ckbox_over", "Overwrite application version if it exists");
 
         // Resources allowed
@@ -74,38 +69,10 @@ public class VIPLayout extends AbstractFormLayout {
         resourcesList.setTitle("Resource(s) on which the application is authorized to execute");
         resourcesList.setMultiple(true);
 
-        this.addMember(applicationLocation);
         this.addMember(FieldUtil.getForm(resourcesList));
         this.addMember(FieldUtil.getForm(overwriteIfexists));
 
         loadResources();
-    }
-
-    public void setApplicationLocationValue(){
-        
-        final AsyncCallback<String> callback = new AsyncCallback<String>() {
-            @Override
-            public void onFailure(Throwable caught) {
-                Layout.getInstance().setWarningMessage("Unable to retrieve configurated root folder for application importer, setting it to Home:<br />" + caught.getMessage());
-                applicationLocation.setValue("/vip/Home");
-            }
-
-            @Override
-            public void onSuccess(String result) {
-                if (ValidatorUtil.validateRootPath(result, "create a folder in")
-                        && ValidatorUtil.validateUserLevel(result, "create a folder in")) {
-                    applicationLocation.setValue(result);
-                }else{
-                    applicationLocation.setValue("/vip/Home");
-                }       
-            }
-        };
-        ApplicationImporterService.Util.getInstance().getApplicationImporterRootFolder(callback);
-
-    }
-
-    public String getApplicationLocation() {
-        return applicationLocation.getValue();
     }
 
     public boolean getOverwrite() {

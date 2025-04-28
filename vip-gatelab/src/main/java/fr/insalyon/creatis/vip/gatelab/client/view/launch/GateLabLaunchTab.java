@@ -83,7 +83,7 @@ public class GateLabLaunchTab extends LaunchTab {
         super.init();
         baseDir = DataManagerConstants.ROOT + "/Home/myGateSimus/inputs";
         releaseDir = "/vip/GateLab (group)/releases/";
-        this.mustBeABoutiquesDescriptor = true;
+        // XXX this.mustBeABoutiquesDescriptor = true;
         this.showExamples = false;
         this.showSeparators = false;
 

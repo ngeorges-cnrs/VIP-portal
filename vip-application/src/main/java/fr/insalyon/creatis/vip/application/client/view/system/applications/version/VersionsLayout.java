@@ -101,7 +101,7 @@ public class VersionsLayout extends VLayout {
             public void onClick(ClickEvent event) {
                 ManageApplicationsTab appsTab = (ManageApplicationsTab) Layout.getInstance().
                         getTab(ApplicationConstants.TAB_MANAGE_APPLICATION);
-                appsTab.setVersion(null, null, null, null, true, true, null, null);
+                appsTab.setVersion(null, null, true, null, null);
             }
         });
         toolstrip.addMember(addButton);
@@ -171,14 +171,8 @@ public class VersionsLayout extends VLayout {
         ListGridField isVisibleField = new ListGridField("visible", "Visible");
         isVisibleField.setType(ListGridFieldType.BOOLEAN);
 
-        ListGridField isBoutiquesFormField = new ListGridField("boutiquesForm", "Use Boutiques Form");
-        isBoutiquesFormField.setType(ListGridFieldType.BOOLEAN);
-
         grid.setFields(
-                isVisibleField,
-                isBoutiquesFormField,
                 new ListGridField("version", "Version"),
-                new ListGridField("lfn", "LFN"),
                 new ListGridField("resources", "Resources"),
                 new ListGridField("tags", "Tags"));
         grid.setSortField("version");
@@ -207,8 +201,8 @@ public class VersionsLayout extends VLayout {
                 List<VersionRecord> dataList = new ArrayList<VersionRecord>();
 
                 for (AppVersion version : result) {
-                    dataList.add(new VersionRecord(version.getVersion(), version.getJsonLfn(),
-                            version.getDoi(), version.isVisible(), version.isBoutiquesForm(), version.getTags(), version.getResources()));
+                    dataList.add(new VersionRecord(version.getVersion(), version.getDoi(), version.isVisible(),
+                            version.getTags(), version.getResources()));
                 }
                 grid.setData(dataList.toArray(new VersionRecord[]{}));
             }
@@ -234,11 +228,8 @@ public class VersionsLayout extends VLayout {
 
         appsTab.setVersion(
             record.getAttribute("version"),
-            record.getAttribute("lfn"),
-            record.getAttribute("jsonLfn"),
             record.getAttribute("doi"),
             record.getAttributeAsBoolean("visible"),
-            record.getAttributeAsBoolean("boutiquesForm"),
             record.getAttributeAsStringArray("tags"),
             record.getAttributeAsStringArray("resources"));
     }

@@ -182,10 +182,8 @@ public class TagData extends JdbcDaoSupport implements TagDAO {
                 results.add(new AppVersion(
                     rs.getString("application"),
                     rs.getString("version"),
-                    rs.getString("json_lfn"),
                     rs.getString("doi"),
-                    rs.getBoolean("visible"),
-                    rs.getBoolean("useBoutiquesForm")));
+                    rs.getBoolean("visible")));
             }
             return results;
 

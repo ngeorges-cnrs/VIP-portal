@@ -168,7 +168,7 @@ public class ApplicationImporterBusiness {
     private void registerApplicationVersion(String vipApplicationName, String vipVersion, String owner, String lfnJsonFile,
                                             List<String> tags, List<String> resources) throws BusinessException {
         Application app = applicationBusiness.getApplication(vipApplicationName);
-        AppVersion newVersion = new AppVersion(vipApplicationName, vipVersion, lfnJsonFile, true, true);
+        AppVersion newVersion = new AppVersion(vipApplicationName, vipVersion, true);
         if (app == null) {
             // If application doesn't exist, create it.
             // New applications are not associated with any class (admins may add classes independently).
