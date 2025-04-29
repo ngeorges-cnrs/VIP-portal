@@ -66,9 +66,6 @@ public class ApplicationImporterBusiness {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    private Server server;
-    private LfcPathsBusiness lfcPathsBusiness;
-    private GRIDAClient gridaClient;
     private BoutiquesBusiness boutiquesBusiness;
     private ApplicationBusiness applicationBusiness;
     private AppVersionBusiness appVersionBusiness;
@@ -78,16 +75,12 @@ public class ApplicationImporterBusiness {
 
     @Autowired
     public ApplicationImporterBusiness(
-            Server server, LfcPathsBusiness lfcPathsBusiness,
-            GRIDAClient gridaClient, BoutiquesBusiness boutiquesBusiness,
+            BoutiquesBusiness boutiquesBusiness,
             ApplicationBusiness applicationBusiness,
             DataManagerBusiness dataManagerBusiness,
             ResourceBusiness resourceBusiness,
             TagBusiness tagBusiness,
             AppVersionBusiness appVersionBusiness) {
-        this.server = server;
-        this.lfcPathsBusiness = lfcPathsBusiness;
-        this.gridaClient = gridaClient;
         this.boutiquesBusiness = boutiquesBusiness;
         this.applicationBusiness = applicationBusiness;
         this.dataManagerBusiness = dataManagerBusiness;
@@ -113,62 +106,17 @@ public class ApplicationImporterBusiness {
                                   List<String> tags, List<String> resources, User user)
             throws BusinessException {
 
-        try {
-            // Check rights
-            checkEditionRights(bt.getName(), bt.getToolVersion(), overwriteApplicationVersion, user);
-            // set the correct LFN - XXX obsolete ?
-            bt.setApplicationLFN(
-                    lfcPathsBusiness.parseBaseDir(
-                            user, bt.getApplicationLFN()).concat("/").concat(bt.getToolVersion().replaceAll("\\s+", "")));
+        // Check rights
+        checkEditionRights(bt.getName(), bt.getToolVersion(), overwriteApplicationVersion, user);
 
-            // Write application json descriptor - XXX proper path
-            String jsonFileName = server.getApplicationImporterFileRepository() + bt.getJsonLFN();
-            writeString(bt.getJsonFile(), jsonFileName);
-
-            // XXX - Upload the JSON file at the end, so that it is not deleted before adding it as dependency to wrapperArchiveName
-            uploadFile(jsonFileName, bt.getJsonLFN());
-
-            // Register application
-            registerApplicationVersion(bt.getName(), bt.getToolVersion(), user.getEmail(), bt.getJsonLFN(), tags, resources);
-
-        } catch (IOException ex) {
-            logger.error("Error creating app {}/{} from boutiques file", bt.getName(), bt.getToolVersion(), ex);
-            throw new BusinessException(ex);
-        } catch (DataManagerException ex) {
-            throw new BusinessException(ex);
-        }
+        // Register application
+        registerApplicationVersion(bt.getName(), bt.getToolVersion(), user.getEmail(), bt.getOriginalDescriptor(), tags, resources);
     }
 
-    private void uploadFile(String localFile, String lfn) throws BusinessException {
-        try {
-            logger.info("Uploading file " + localFile + " to " + lfn);
-            if (gridaClient.exist(lfn)) {
-                gridaClient.delete(lfn);
-            }
-            gridaClient.uploadFile(localFile, (new File(lfn)).getParent());
-        } catch (GRIDAClientException ex) {
-            logger.error("Error uploading file {} to {}", localFile, lfn, ex);
-            throw new BusinessException(ex);
-        }
-    }
-
-    private void writeString(String string, String fileName) throws BusinessException, FileNotFoundException, UnsupportedEncodingException {
-        // Check if base file directory exists, otherwise create it.
-        File directory = (new File(fileName)).getParentFile();
-        if (!directory.exists() && !directory.mkdirs()) {
-            logger.error("Error importing an application : Cannot create directory {}", directory);
-            throw new BusinessException("Cannot create directory " + directory.getAbsolutePath());
-        }
-
-        PrintWriter writer = new PrintWriter(fileName, "UTF-8");
-        writer.write(string);
-        writer.close();
-    }
-
-    private void registerApplicationVersion(String vipApplicationName, String vipVersion, String owner, String lfnJsonFile,
+    private void registerApplicationVersion(String vipApplicationName, String vipVersion, String owner, String descriptor,
                                             List<String> tags, List<String> resources) throws BusinessException {
         Application app = applicationBusiness.getApplication(vipApplicationName);
-        AppVersion newVersion = new AppVersion(vipApplicationName, vipVersion, true);
+        AppVersion newVersion = new AppVersion(vipApplicationName, vipVersion, descriptor, null, true);
         if (app == null) {
             // If application doesn't exist, create it.
             // New applications are not associated with any class (admins may add classes independently).
@@ -179,6 +127,9 @@ public class ApplicationImporterBusiness {
         for (AppVersion existingVersion : versions) {
             if (existingVersion.getVersion().equals(newVersion.getVersion())) {
                 appVersionBusiness.update(newVersion);
+                // XXX ?
+                registerResourcesAssociated(newVersion, resources);
+                registerTagsAssociated(newVersion, tags);
                 return;
             }
         }

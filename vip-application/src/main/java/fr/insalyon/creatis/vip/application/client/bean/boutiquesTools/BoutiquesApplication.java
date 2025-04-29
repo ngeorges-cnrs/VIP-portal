@@ -24,6 +24,7 @@ public class BoutiquesApplication implements IsSerializable {
     private String name;
     private String description;
     private String version;
+    private String originalDescriptor;
     private Set<BoutiquesInput> inputs = new HashSet<>();
     // Input dependencies
     private Set<BoutiquesGroup> groups = new HashSet<>();
@@ -53,10 +54,11 @@ public class BoutiquesApplication implements IsSerializable {
      * @param description String
      * @param version String
      */
-    public BoutiquesApplication(String name, String description, String version){
+    public BoutiquesApplication(String name, String description, String version, String originalDescriptor ) {
         this.name = name;
         this.description = description;
         this.version = version;
+        this.originalDescriptor = originalDescriptor;
     }
 
     public void setBoutiquesExtensions(BoutiquesApplicationExtensions boutiquesExtensions) {
@@ -82,6 +84,10 @@ public class BoutiquesApplication implements IsSerializable {
      */
     public String getDescription(){
         return this.description;
+    }
+
+    public String getOriginalDescriptor(){
+        return this.originalDescriptor;
     }
 
     /**
@@ -194,24 +200,8 @@ public class BoutiquesApplication implements IsSerializable {
         return outputFiles;
     }
 
-    public String getJsonFile() {
-        return jsonFile;
-    }
-
-    public void setJsonFile(String jsonFile) {
-        this.jsonFile = jsonFile;
-    }
-
-    public String getApplicationLFN() {
-        return applicationLFN;
-    }
-
     public Map<String, String> getTags() {
         return tags;
-    }
-
-    public String getJsonLFN() {
-        return this.applicationLFN + "/" + getName() + ".json";
     }
 
     public String getVipContainer() {

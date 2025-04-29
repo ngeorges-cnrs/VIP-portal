@@ -284,13 +284,14 @@ public class ApplicationData extends JdbcDaoSupport implements ApplicationDAO {
 
     @Override
     public void addVersion(AppVersion version) throws DAOException {
-        String query =  "INSERT INTO VIPAppVersions(application, version, visible) "
-        +               "VALUES (?, ?, ?)";
+        String query =  "INSERT INTO VIPAppVersions(application, version, descriptor, visible) "
+        +               "VALUES (?, ?, ?, ?)";
 
         try (PreparedStatement ps = getConnection().prepareStatement(query)) {
             ps.setString(1, version.getApplicationName());
             ps.setString(2, version.getVersion());
-            ps.setBoolean(3, version.isVisible());
+            ps.setString(3, version.getDescriptor());
+            ps.setBoolean(4, version.isVisible());
             ps.executeUpdate();
 
         } catch (SQLException ex) {
@@ -307,13 +308,14 @@ public class ApplicationData extends JdbcDaoSupport implements ApplicationDAO {
 
     @Override
     public void updateVersion(AppVersion version) throws DAOException {
-        String query =  "UPDATE VIPAppVersions SET visible=? "
+        String query =  "UPDATE VIPAppVersions SET descriptor=?, visible=? "
         +               "WHERE application=? AND version=?";
 
         try (PreparedStatement ps = getConnection().prepareStatement(query)) {
-            ps.setBoolean(1, version.isVisible());
-            ps.setString(2, version.getApplicationName());
-            ps.setString(3, version.getVersion());
+            ps.setString(1, version.getDescriptor());
+            ps.setBoolean(2, version.isVisible());
+            ps.setString(3, version.getApplicationName());
+            ps.setString(4, version.getVersion());
             ps.executeUpdate();
 
         } catch (SQLException ex) {

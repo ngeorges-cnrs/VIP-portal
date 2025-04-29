@@ -104,8 +104,9 @@ public class EditVersionLayout extends AbstractFormLayout {
             @Override
             public void onClick(ClickEvent event) {
                 if (versionField.validate()) {
+                    // XXX doi / how to properly update the object ?
                     AppVersion toSave = new AppVersion(applicationName, versionField.getValueAsString().trim(),
-                            isVisibleField.getValueAsBoolean());
+                            descriptorField.getValueAsString(), null, isVisibleField.getValueAsBoolean());
                     toSave.setResources(Arrays.asList(resourcesList.getValues()));
                     toSave.setTags(Arrays.asList(tagsList.getValues()));
                     save(toSave);
