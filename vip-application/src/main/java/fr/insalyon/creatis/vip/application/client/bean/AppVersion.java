@@ -44,6 +44,7 @@ public class AppVersion implements IsSerializable {
 
     private String applicationName;
     private String version;
+    private String descriptor;
     private String doi;
     private boolean visible;;
     private List<String> resources;
@@ -62,16 +63,16 @@ public class AppVersion implements IsSerializable {
     }
 
     public AppVersion(
-            String applicationName, String version, String doi, boolean visible) {
+            String applicationName, String version, String descriptor, String doi, boolean visible) {
         this(applicationName, version, visible);
+        this.descriptor = descriptor;
         this.doi = doi;
     }
 
     public AppVersion(
-            String applicationName, String version, String doi, boolean visible,
+            String applicationName, String version, String descriptor, String doi, boolean visible,
             List<String> resources, List<String> tags) {
-        this(applicationName, version, visible);
-        this.doi = doi;
+        this(applicationName, version, descriptor, doi, visible);
         this.resources = resources;
         this.tags = tags;
     }
@@ -87,6 +88,10 @@ public class AppVersion implements IsSerializable {
 
     public String getVersion() {
         return version;
+    }
+
+    public String getDescriptor() {
+        return descriptor;
     }
 
     public String getDoi() {

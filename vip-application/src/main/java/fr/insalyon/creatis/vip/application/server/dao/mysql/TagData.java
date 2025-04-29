@@ -182,6 +182,7 @@ public class TagData extends JdbcDaoSupport implements TagDAO {
                 results.add(new AppVersion(
                     rs.getString("application"),
                     rs.getString("version"),
+                    rs.getString("descriptor"),
                     rs.getString("doi"),
                     rs.getBoolean("visible")));
             }

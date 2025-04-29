@@ -52,7 +52,6 @@ import fr.insalyon.creatis.vip.core.client.view.CoreConstants;
 import fr.insalyon.creatis.vip.core.server.business.BusinessException;
 import fr.insalyon.creatis.vip.core.server.business.Server;
 import fr.insalyon.creatis.vip.datamanager.client.DataManagerConstants;
-import fr.insalyon.creatis.vip.datamanager.server.business.DataManagerBusiness;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,22 +83,19 @@ public class PipelineBusiness {
     private final WorkflowBusiness workflowBusiness;
     private final ApplicationBusiness applicationBusiness;
     private final BoutiquesBusiness boutiquesBusiness;
-    private final DataManagerBusiness dataManagerBusiness;
     private final AppVersionBusiness appVersionBusiness;
 
     @Autowired
     public PipelineBusiness(
             Supplier<User> currentUserProvider, Environment env,
             Server server, WorkflowBusiness workflowBusiness, ApplicationBusiness applicationBusiness,
-            BoutiquesBusiness boutiquesBusiness, DataManagerBusiness dataManagerBusiness,
-            AppVersionBusiness appVersionBusiness) {
+            BoutiquesBusiness boutiquesBusiness, AppVersionBusiness appVersionBusiness) {
         this.currentUserProvider = currentUserProvider;
         this.env = env;
         this.server = server;
         this.workflowBusiness = workflowBusiness;
         this.applicationBusiness = applicationBusiness;
         this.boutiquesBusiness = boutiquesBusiness;
-        this.dataManagerBusiness = dataManagerBusiness;
         this.appVersionBusiness = appVersionBusiness;
     }
 
@@ -163,21 +159,8 @@ public class PipelineBusiness {
 
     public BoutiquesDescriptor getBoutiquesDescriptor(String pipelineId) throws ApiException {
         AppVersion appVersion = getAppVersionFromPipelineId(pipelineId);
-
-        String boutiquesUri = "XXX TODO nofile"; // appVersion.getJsonLfn();
-        if (boutiquesUri == null || boutiquesUri.isEmpty()) {
-            logger.error("boutiques lfn not specified for app {}", pipelineId);
-            throw new ApiException(NOT_COMPATIBLE_WITH_BOUTIQUES, pipelineId);
-        }
-
         try {
-            String boutiquesFilePath = dataManagerBusiness.getRemoteFile(currentUserProvider.get(), boutiquesUri);
-            File boutiquesFile = Paths.get(boutiquesFilePath).toFile();
-            if ( ! boutiquesFile.exists()) {
-                logger.error("Boutiques file ({}) absent after download in {}", boutiquesUri, boutiquesFilePath);
-                throw new ApiException(GENERIC_API_ERROR);
-            }
-            return boutiquesBusiness.parseBoutiquesFile(boutiquesFile);
+            return boutiquesBusiness.parseBoutiquesString(appVersion.getDescriptor());
         } catch (BusinessException e) {
             throw new ApiException(e);
         }

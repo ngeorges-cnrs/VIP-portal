@@ -167,7 +167,6 @@ public class WorkflowBusiness {
 
             List<ParameterSweep> parameters = getParameters(parametersMap, user, groups);
             AppVersion appVersion = appVersionBusiness.getVersion(appName, version);
-            String workflowPath = "XXX TODO nofile"; //dataManagerBusiness.getRemoteFile(user, server.useMoteurlite() ? appVersion.getJsonLfn() : "XXX/nofile");
             logger.info( "Moteurlite status: " + server.useMoteurlite());
 
             List<Resource> resources = resourceBusiness.getUsableResources(user, appVersion);
@@ -179,7 +178,7 @@ public class WorkflowBusiness {
             Engine engine = engineBusiness.selectEngine(engineBusiness.getUsableEngines(resource));
 
             try {
-                workflow = workflowExecutionBusiness.launch(engine.getEndpoint(), appVersion, user, simulationName, workflowPath, parameters, 
+                workflow = workflowExecutionBusiness.launch(engine.getEndpoint(), appVersion, user, simulationName, parameters,
                     resource.getType().toString(), resource.getConfiguration());
             } catch (BusinessException be) {
                 logger.error("BusinessException caught on launch workflow, engine {} will be disabled", engine.getName());

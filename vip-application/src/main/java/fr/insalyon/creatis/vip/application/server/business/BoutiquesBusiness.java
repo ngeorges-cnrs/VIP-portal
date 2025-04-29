@@ -76,7 +76,7 @@ public class BoutiquesBusiness {
             throws BusinessException {
 
         // fetch json file
-        String jsonLfn = "XXX TODO nofile";
+        String jsonLfn = "XXX TODO nofile2";
         String localFile = dataManagerBusiness.getRemoteFile(user, jsonLfn);
 
         // TODO : verify it has an author (refactor boutique parser from application-importer
@@ -112,15 +112,9 @@ public class BoutiquesBusiness {
     public String getApplicationDescriptorString(
             User user, String applicationName, String applicationVersion)
             throws BusinessException {
-        String descriptorLfn = "XXX TODO"; // getJsonLfn(applicationName, applicationVersion);
-        try {
-            String localFilePath =
-                    dataManagerBusiness.getRemoteFile(user, descriptorLfn);
-            return new Scanner(new File(localFilePath)).useDelimiter("\\Z").next();
-        } catch (IOException ex) {
-            logger.error("Error reading boutiques file {}", descriptorLfn, ex);
-            throw new BusinessException(ex);
-        }
+        AppVersion appVersion = appVersionBusiness.getVersion(applicationName, applicationVersion);
+        // XXX TODO check user ?
+        return appVersion.getDescriptor();
     }
 
     public BoutiquesDescriptor parseBoutiquesFile(File boutiquesFile) throws BusinessException {
@@ -129,6 +123,15 @@ public class BoutiquesBusiness {
         } catch (IOException e) {
             logger.error("Error reading {} file for boutiques parsing", boutiquesFile, e);
             throw new BusinessException("Error reading boutiques file", e);
+        }
+    }
+
+    public BoutiquesDescriptor parseBoutiquesString(String descriptor) throws BusinessException {
+        try {
+            return objectMapper.readValue(descriptor, BoutiquesDescriptor.class);
+        } catch (IOException e) {
+            logger.error("Error parsing descriptor", e);
+            throw new BusinessException("Error parsing descriptor", e);
         }
     }
 

@@ -244,6 +244,7 @@ public class ApplicationData extends JdbcDaoSupport implements ApplicationDAO {
                 versions.add(new AppVersion(
                         name,
                         rs.getString("version"),
+                        rs.getString("descriptor"),
                         rs.getString("doi"),
                         rs.getBoolean("visible")));
             }
@@ -269,6 +270,7 @@ public class ApplicationData extends JdbcDaoSupport implements ApplicationDAO {
                 versions.add(new AppVersion(
                         rs.getString("application"),
                         rs.getString("version"),
+                        rs.getString("descriptor"),
                         rs.getString("doi"),
                         rs.getBoolean("visible")));
             }
@@ -365,6 +367,7 @@ public class ApplicationData extends JdbcDaoSupport implements ApplicationDAO {
             if (rs.first()) {
                 return new AppVersion(rs.getString("application"),
                         rs.getString("version"),
+                        rs.getString("descriptor"),
                         rs.getString("doi"),
                         rs.getBoolean("visible"));
             }

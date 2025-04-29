@@ -74,10 +74,10 @@ public class WorkflowExecutionBusiness {
     }
 
     public Workflow launch(String engineEndpoint, AppVersion appVersion, User user, String simulationName,
-            String workflowPath, List<ParameterSweep> parameters, String settings, String executorConfig) throws BusinessException {
+            List<ParameterSweep> parameters, String settings, String executorConfig) throws BusinessException {
 
         try {
-            String workflowContent = FileUtil.read(new File(workflowPath));
+            String workflowContent = appVersion.getDescriptor();
             String inputs = (parameters != null) ? getParametersAsXMLInput(parameters) : null;
             String proxyFileName = server.getServerProxy(server.getVoName());
             String workflowID = engine.launch(engineEndpoint, workflowContent, inputs, "", "", proxyFileName);

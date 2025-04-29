@@ -112,6 +112,7 @@ public class ApplicationDataInitializer extends JdbcDaoSupport {
         tableInitializer.createTable("VIPAppVersions",
                     "application VARCHAR(255), "
                 +   "version VARCHAR(255), "
+                +   "descriptor JSON, "
                 +   "doi VARCHAR(255), "
                 +   "visible BOOLEAN, "
                 +   "PRIMARY KEY (application, version), "

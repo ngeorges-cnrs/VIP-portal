@@ -521,6 +521,6 @@ public class ExecutionControllerIT extends BaseWebSpringIT {
         engineBusiness.add(engine);
         resourceBusiness.add(resource);
 
-        resourceBusiness.associate(resource, new AppVersion(appName, version));
+        resourceBusiness.associate(resource, new AppVersion(appName, version, null, null, true));
     }
 }

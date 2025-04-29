@@ -37,11 +37,11 @@ public class LocalWorkflowExecutionBusiness extends WorkflowExecutionBusiness {
     }
 
     @Override
-    public Workflow launch(String engineEndpoint, AppVersion appVersion, User user, String simulationName, String workflowPath, 
+    public Workflow launch(String engineEndpoint, AppVersion appVersion, User user, String simulationName,
             List<ParameterSweep> parameters, String settings, String executorConfig) throws BusinessException {
         String workflowContent;
         try {
-            workflowContent = FileUtil.read(new File(workflowPath));
+            workflowContent = appVersion.getDescriptor();
             String workflowId = localBashEngine.launch(workflowContent, parameters);
             return new Workflow(workflowId, user.getFullName(), WorkflowStatus.Running, new Date(), null, simulationName, appVersion.getApplicationName(), appVersion.getVersion(), "", engineEndpoint, null);
         } catch (Exception e) {

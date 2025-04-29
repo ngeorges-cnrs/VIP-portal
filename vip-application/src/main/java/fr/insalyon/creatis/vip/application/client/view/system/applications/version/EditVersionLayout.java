@@ -61,6 +61,7 @@ public class EditVersionLayout extends AbstractFormLayout {
     private String applicationName;
     private Label applicationLabel;
     private TextItem versionField;
+    private TextItem descriptorField;
     private CheckboxItem isVisibleField;
     private SelectItem tagsList;
     private SelectItem resourcesList;
@@ -80,6 +81,9 @@ public class EditVersionLayout extends AbstractFormLayout {
 
         versionField = FieldUtil.getTextItem(450, null);
         versionField.setDisabled(true);
+
+        descriptorField = FieldUtil.getTextItem(450, null); // XXX textwidth vs size
+        descriptorField.setDisabled(true);
 
         isVisibleField = new CheckboxItem();
         isVisibleField.setTitle("Visible");
@@ -128,6 +132,7 @@ public class EditVersionLayout extends AbstractFormLayout {
 
         this.addMember(applicationLabel);
         addField("Version", versionField);
+        addField("Descriptor", descriptorField);
         this.addMember(FieldUtil.getForm(isVisibleField));
         this.addMember(FieldUtil.getForm(tagsList));
         this.addMember(FieldUtil.getForm(resourcesList));
@@ -164,7 +169,7 @@ public class EditVersionLayout extends AbstractFormLayout {
             public void onSuccess(Void result) {
                 WidgetUtil.resetIButton(saveButton, "Save", CoreConstants.ICON_SAVED);
                 WidgetUtil.resetIButton(removeButton, "Remove", CoreConstants.ICON_DELETE);
-                setVersion(null, true, null, null);
+                setVersion(null, null, true, null, null);
                 ManageApplicationsTab tab = (ManageApplicationsTab) Layout.getInstance().
                         getTab(ApplicationConstants.TAB_MANAGE_APPLICATION);
                 tab.loadVersions(applicationName);
@@ -173,17 +178,20 @@ public class EditVersionLayout extends AbstractFormLayout {
     }
 
     public void setApplication(String applicationName) {
-        setVersion(null, true, null, null);
+        setVersion(null, null, true, null, null);
         this.applicationName = applicationName;
         this.applicationLabel.setContents("<b>Application:</b> " + applicationName);
         this.versionField.setDisabled(false);
+        this.descriptorField.setDisabled(true);
         this.saveButton.setDisabled(false);
     }
 
-    public void setVersion(String version, boolean isVisible, String[] tags, String[] resources) {
+    public void setVersion(String version, String descriptor, boolean isVisible, String[] tags, String[] resources) {
         if (version != null) {
             this.versionField.setValue(version);
             this.versionField.setDisabled(true);
+            this.descriptorField.setValue(descriptor);
+            this.descriptorField.setDisabled(true);
             this.isVisibleField.setValue(isVisible);
             this.tagsList.setValues(tags);
             this.resourcesList.setValues(resources);
@@ -192,6 +200,8 @@ public class EditVersionLayout extends AbstractFormLayout {
         } else {
             this.versionField.setValue("");
             this.versionField.setDisabled(false);
+            this.descriptorField.setValue("");
+            this.descriptorField.setDisabled(true);
             this.isVisibleField.setValue(true);
             this.removeButton.setDisabled(true);
             this.newVersion = true;
