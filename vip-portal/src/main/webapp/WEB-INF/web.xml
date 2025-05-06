@@ -167,7 +167,7 @@ knowledge of the CeCILL-B license and that you accept its terms.
             <param-name>contextClass</param-name>
             <param-value>org.springframework.web.context.support.AnnotationConfigWebApplicationContext</param-value>
         </init-param>
-         <init-param>
+        <init-param>
             <param-name>contextConfigLocation</param-name>
             <param-value>fr.insalyon.creatis.vip.core.server.SpringCoreConfig</param-value>
         </init-param>
@@ -185,6 +185,25 @@ knowledge of the CeCILL-B license and that you accept its terms.
         <filter-name>springSecurityFilterChain</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
+    <!-- END REST API -->
+    <!-- Admin API -->
+    <servlet>
+        <servlet-name>AdminAPI</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <init-param>
+            <param-name>contextClass</param-name>
+            <param-value>org.springframework.web.context.support.AnnotationConfigWebApplicationContext</param-value>
+        </init-param>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>fr.insalyon.creatis.vip.core.server.SpringCoreConfig</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AdminAPI</servlet-name>
+        <url-pattern>/api/*</url-pattern>
+    </servlet-mapping>
     <!-- END REST API -->
     <!-- Visualization API -->
     <servlet>

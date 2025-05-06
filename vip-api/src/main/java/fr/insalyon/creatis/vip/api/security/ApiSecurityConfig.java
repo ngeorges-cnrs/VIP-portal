@@ -97,11 +97,12 @@ public class ApiSecurityConfig {
     @Bean
     @Order(1)
     public SecurityFilterChain apiFilterChain(HttpSecurity http) throws Exception {
-        // Spring Security configuration for /rest API endpoints, common to both API key and OIDC authentications.
+        // Spring Security configuration for /rest and /api endpoints, common to both API key and OIDC authentications.
         // Note that it is required to used AntPathRequestMatcher.antMatcher() everywhere below,
         // otherwise Spring uses MvcRequestMatcher as the default requestMatchers implementation.
         http
-                .securityMatcher(antMatcher("/rest/**"))
+                .securityMatchers((matchers) -> matchers
+                        .requestMatchers(antMatcher("/rest/**"), antMatcher("/api/**")))
                 .authorizeHttpRequests((authorize) -> authorize
                         .requestMatchers(antMatcher("/rest/platform")).permitAll()
                         .requestMatchers(antMatcher("/rest/authenticate")).permitAll()
@@ -113,6 +114,7 @@ public class ApiSecurityConfig {
                         .requestMatchers(antMatcher("/rest/executions/{executionId}/summary")).hasAnyRole("SERVICE")
                         .requestMatchers(antMatcher("/rest/statistics/**")).hasAnyRole("ADVANCED", "ADMINISTRATOR")
                         .requestMatchers(antMatcher("/rest/**")).authenticated()
+                        .requestMatchers(antMatcher("/api/**")).authenticated()
                         .anyRequest().permitAll()
                 )
                 .exceptionHandling((exceptionHandling) -> exceptionHandling.authenticationEntryPoint(vipAuthenticationEntryPoint))
@@ -122,6 +124,7 @@ public class ApiSecurityConfig {
                 .cors(Customizer.withDefaults())
                 .headers((headers) -> headers.frameOptions((frameOptions) -> frameOptions.sameOrigin()))
                 .csrf((csrf) -> csrf.disable());
+
         // API key authentication always active
         http.addFilterBefore(apikeyAuthenticationFilter(), BasicAuthenticationFilter.class);
         // OIDC Bearer token authentication, if enabled
