@@ -57,10 +57,4 @@ public class SpringApplicationConfig {
     public StatsDAO getStatsDAO() throws WorkflowsDBDAOException, WorkflowsDBException{
         return workflowsDBDAOFactory().getStatsDAO();
     }
-
-    @Bean
-    public WorkflowEngineInstantiator getWorkflowEngineInstantiator(Server server) {
-        return new RestServiceEngine(server);
-    }
-
 }

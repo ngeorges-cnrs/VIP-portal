@@ -78,6 +78,7 @@ public class LocalBashEngine {
     }
 
     public String launch(String workflowContent, List<ParameterSweep> parameters)  {
+        // TODO explicit notsupported exception
         try {
             LocalBashExecution newExecution =
                     createExecution(workflowContent, parameters);
