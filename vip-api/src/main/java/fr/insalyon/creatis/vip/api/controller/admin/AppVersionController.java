@@ -41,9 +41,12 @@ import fr.insalyon.creatis.vip.core.server.business.BusinessException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,12 +70,44 @@ public class AppVersionController extends ApiController {
         try {
             List<Application> apps = applicationBusiness.getApplications();
             List<AppVersion> appVersions = new ArrayList<>();
-            for (Application app: apps) {
+            for (Application app : apps) {
                 appVersions.addAll(appVersionBusiness.getVersions(app.getName()));
             }
             return appVersions;
         } catch (BusinessException e) {
             throw new ApiException(e);
         }
+    }
+
+    @RequestMapping("{appVersionId}")
+    public AppVersion getAppVersion(@PathVariable String appVersionId) throws ApiException {
+        logMethodInvocation(logger, "getAppVersion", appVersionId);
+        try {
+            appVersionId = URLDecoder.decode(appVersionId, "UTF8");
+        } catch (UnsupportedEncodingException e) {
+            logger.error("Error decoding appVersionId {}", appVersionId, e);
+            throw new ApiException("cannot decode appVersionId : " + appVersionId);
+        }
+        try {
+            AppVersion appVersion = null;
+            int delimiterPos = appVersionId.lastIndexOf("/");
+            if (delimiterPos >= 0) {
+                String appName = appVersionId.substring(0, delimiterPos);
+                String version = appVersionId.substring(delimiterPos + 1);
+                appVersion = appVersionBusiness.getVersion(appName, version); // XXX NPE on unknown appName/version
+            }
+            if (appVersion == null) {
+                throw new ApiException("Not found"); // XXX should 404/403 ?
+            }
+            return appVersion;
+        } catch (BusinessException e) {
+            throw new ApiException(e);
+        }
+    }
+
+    @RequestMapping("{appVersionIdFirstPart}/{appVersionIdSecondPart}")
+    public AppVersion getAppVersion(@PathVariable String appVersionIdFirstPart,
+                                    @PathVariable String appVersionIdSecondPart) throws ApiException {
+        return getAppVersion(appVersionIdFirstPart + "/" + appVersionIdSecondPart);
     }
 }

@@ -42,6 +42,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestBody;
+import jakarta.validation.Valid;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -59,7 +62,7 @@ public class ApplicationController extends ApiController {
         this.applicationBusiness = applicationBusiness;
     }
 
-    @RequestMapping
+    @RequestMapping(method = RequestMethod.GET)
     public List<Application> listApplications() throws ApiException {
         logMethodInvocation(logger, "listApplications");
         try {
@@ -84,6 +87,28 @@ public class ApplicationController extends ApiController {
                 throw new ApiException("Not found"); // XXX should 404/403 ?
             }
             return app;
+        } catch (BusinessException e) {
+            throw new ApiException(e);
+        }
+    }
+
+    // XXX create POST/PUT vs id
+    // @RequestMapping(method = RequestMethod.POST)
+    // public Application createApplication() {
+    // }
+
+    @RequestMapping(value = "/{applicationId}", method = RequestMethod.PUT)
+    public Application createApplication(
+            @PathVariable String applicationId,
+            @RequestBody @Valid Application app) throws ApiException {
+        logMethodInvocation(logger, "createApplication", applicationId);
+        try {
+            // XXX name consistency, idempotency, ...
+            // if (!(app.getName() == applicationId)) {
+            //    throw new ApiException("Invalid");
+            //}
+            applicationBusiness.add(app);
+            return applicationBusiness.getApplication(applicationId);
         } catch (BusinessException e) {
             throw new ApiException(e);
         }
