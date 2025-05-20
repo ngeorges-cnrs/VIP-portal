@@ -44,6 +44,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestBody;
+import jakarta.validation.Valid;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -64,7 +67,7 @@ public class AppVersionController extends ApiController {
         this.appVersionBusiness = appVersionBusiness;
     }
 
-    @RequestMapping
+    @RequestMapping(method = RequestMethod.GET)
     public List<AppVersion> listAppVersions() throws ApiException {
         logMethodInvocation(logger, "listAppVersions");
         try {
@@ -79,23 +82,39 @@ public class AppVersionController extends ApiController {
         }
     }
 
-    @RequestMapping("{appVersionId}")
-    public AppVersion getAppVersion(@PathVariable String appVersionId) throws ApiException {
-        logMethodInvocation(logger, "getAppVersion", appVersionId);
+    private class AppVersionStrings {
+        public String appName;
+        public String version;
+        AppVersionStrings(String appName, String version) {
+            this.appName = appName;
+            this.version = version;
+        }
+    }
+
+    private AppVersionStrings parseAppVersionId(String appVersionId) throws ApiException {
         try {
             appVersionId = URLDecoder.decode(appVersionId, "UTF8");
-        } catch (UnsupportedEncodingException e) {
-            logger.error("Error decoding appVersionId {}", appVersionId, e);
-            throw new ApiException("cannot decode appVersionId : " + appVersionId);
-        }
-        try {
-            AppVersion appVersion = null;
             int delimiterPos = appVersionId.lastIndexOf("/");
             if (delimiterPos >= 0) {
                 String appName = appVersionId.substring(0, delimiterPos);
                 String version = appVersionId.substring(delimiterPos + 1);
-                appVersion = appVersionBusiness.getVersion(appName, version); // XXX NPE on unknown appName/version
+                return new AppVersionStrings(appName, version);
+            } else {
+                throw new ApiException("Invalid appVersionId");
             }
+        } catch (UnsupportedEncodingException | ApiException e) {
+            logger.error("Error decoding appVersionId {}", appVersionId, e);
+            throw new ApiException("cannot decode appVersionId : " + appVersionId);
+        }
+
+    }
+
+    @RequestMapping(value = "{appVersionId}", method = RequestMethod.GET)
+    public AppVersion getAppVersion(@PathVariable String appVersionId) throws ApiException {
+        logMethodInvocation(logger, "getAppVersion", appVersionId);
+        AppVersionStrings input = parseAppVersionId(appVersionId);
+        try {
+            AppVersion appVersion = appVersionBusiness.getVersion(input.appName, input.version);
             if (appVersion == null) {
                 throw new ApiException("Not found"); // XXX should 404/403 ?
             }
@@ -105,9 +124,57 @@ public class AppVersionController extends ApiController {
         }
     }
 
-    @RequestMapping("{appVersionIdFirstPart}/{appVersionIdSecondPart}")
+    @RequestMapping(value = "{appVersionIdFirstPart}/{appVersionIdSecondPart}", method = RequestMethod.GET)
     public AppVersion getAppVersion(@PathVariable String appVersionIdFirstPart,
                                     @PathVariable String appVersionIdSecondPart) throws ApiException {
         return getAppVersion(appVersionIdFirstPart + "/" + appVersionIdSecondPart);
+    }
+
+    // XXX create POST/PUT vs id, idempotency, overwrite...
+    @RequestMapping(value = "/{appVersionId}", method = RequestMethod.PUT)
+    public AppVersion createOrUpdateAppVersion(@PathVariable String appVersionId,
+                                               @RequestBody @Valid AppVersion appVersion) throws ApiException {
+        logMethodInvocation(logger, "createOrUpdateAppVersion", appVersionId);
+        AppVersionStrings input = parseAppVersionId(appVersionId);
+        try {
+            AppVersion existingAppVersion = appVersionBusiness.getVersion(input.appName, input.version);
+            if (existingAppVersion == null) {
+                appVersionBusiness.add(appVersion);
+            } else {
+                appVersionBusiness.update(appVersion);
+            }
+            return appVersionBusiness.getVersion(input.appName, input.version);
+        } catch (BusinessException e) {
+            throw new ApiException(e);
+        }
+    }
+
+    @RequestMapping(value = "/{appVersionIdFirstPart}/{appVersionIdSecondPart}", method = RequestMethod.PUT)
+    public AppVersion createOrUpdateAppVersion(@PathVariable String appVersionIdFirstPart,
+                                               @PathVariable String appVersionIdSecondPart,
+                                               @RequestBody @Valid AppVersion appVersion) throws ApiException {
+        return createOrUpdateAppVersion(appVersionIdFirstPart + "/" + appVersionIdSecondPart, appVersion);
+    }
+
+    @RequestMapping(method = RequestMethod.POST)
+    public AppVersion createAppVersion(@RequestBody @Valid AppVersion appVersion) throws ApiException {
+        return createOrUpdateAppVersion(appVersion.getApplicationName(), appVersion.getVersion(), appVersion);
+    }
+
+    @RequestMapping(value = "/{appVersionId}", method = RequestMethod.DELETE)
+    public void deleteAppVersion(@PathVariable String appVersionId) throws ApiException {
+        logMethodInvocation(logger, "deleteAppVersion", appVersionId);
+        AppVersionStrings input = parseAppVersionId(appVersionId);
+        try {
+            appVersionBusiness.remove(input.appName, input.version);
+        } catch (BusinessException e) {
+            throw new ApiException(e);
+        }
+    }
+
+    @RequestMapping(value = "/{appVersionIdFirstPart}/{appVersionIdSecondPart}", method = RequestMethod.DELETE)
+    public void deleteAppVersion(@PathVariable String appVersionIdFirstPart,
+                                 @PathVariable String appVersionIdSecondPart) throws ApiException {
+        deleteAppVersion(appVersionIdFirstPart + "/" + appVersionIdSecondPart);
     }
 }

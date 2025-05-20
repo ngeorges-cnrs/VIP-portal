@@ -72,7 +72,7 @@ public class ApplicationController extends ApiController {
         }
     }
 
-    @RequestMapping("{applicationId}")
+    @RequestMapping(value = "{applicationId}", method = RequestMethod.GET)
     public Application getApplication(@PathVariable String applicationId) throws ApiException {
         logMethodInvocation(logger, "getApplication", applicationId);
         try {
@@ -96,22 +96,39 @@ public class ApplicationController extends ApiController {
     // @RequestMapping(method = RequestMethod.POST)
     // public Application createApplication() {
     // }
-
     @RequestMapping(value = "/{applicationId}", method = RequestMethod.PUT)
-    public Application createApplication(
-            @PathVariable String applicationId,
-            @RequestBody @Valid Application app) throws ApiException {
-        logMethodInvocation(logger, "createApplication", applicationId);
+    public Application createOrUpdateApplication(@PathVariable String applicationId,
+                                                 @RequestBody @Valid Application app) throws ApiException {
+        logMethodInvocation(logger, "createOrUpdateApplication", applicationId);
         try {
             // XXX name consistency, idempotency, ...
             // if (!(app.getName() == applicationId)) {
             //    throw new ApiException("Invalid");
             //}
-            applicationBusiness.add(app);
+            Application existingApp = applicationBusiness.getApplication(applicationId);
+            if (existingApp == null) {
+                applicationBusiness.add(app);
+            } else {
+                applicationBusiness.update(app);
+            }
             return applicationBusiness.getApplication(applicationId);
         } catch (BusinessException e) {
             throw new ApiException(e);
         }
     }
 
+    @RequestMapping(method = RequestMethod.POST)
+    public Application createApplication(@RequestBody @Valid Application app) throws ApiException {
+        return createOrUpdateApplication(app.getName(), app);
+    }
+
+    @RequestMapping(value = "/{applicationId}", method = RequestMethod.DELETE)
+    public void deleteApplication(@PathVariable String applicationId) throws ApiException {
+        logMethodInvocation(logger, "deleteApplication", applicationId);
+        try {
+            applicationBusiness.remove(applicationId);
+        } catch (BusinessException e) {
+            throw new ApiException(e);
+        }
+    }
 }
