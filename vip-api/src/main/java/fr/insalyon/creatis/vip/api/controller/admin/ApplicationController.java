@@ -76,12 +76,6 @@ public class ApplicationController extends ApiController {
     public Application getApplication(@PathVariable String applicationId) throws ApiException {
         logMethodInvocation(logger, "getApplication", applicationId);
         try {
-            applicationId = URLDecoder.decode(applicationId, "UTF8");
-        } catch (UnsupportedEncodingException e) {
-            logger.error("Error decoding applicationId {}", applicationId, e);
-            throw new ApiException("cannot decode applicationId : " + applicationId);
-        }
-        try {
             Application app = applicationBusiness.getApplication(applicationId);
             if (app == null) {
                 throw new ApiException("Not found"); // XXX should 404/403 ?

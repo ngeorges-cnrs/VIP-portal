@@ -93,7 +93,6 @@ public class AppVersionController extends ApiController {
 
     private AppVersionStrings parseAppVersionId(String appVersionId) throws ApiException {
         try {
-            appVersionId = URLDecoder.decode(appVersionId, "UTF8");
             int delimiterPos = appVersionId.lastIndexOf("/");
             if (delimiterPos >= 0) {
                 String appName = appVersionId.substring(0, delimiterPos);
@@ -102,7 +101,7 @@ public class AppVersionController extends ApiController {
             } else {
                 throw new ApiException("Invalid appVersionId");
             }
-        } catch (UnsupportedEncodingException | ApiException e) {
+        } catch (ApiException e) {
             logger.error("Error decoding appVersionId {}", appVersionId, e);
             throw new ApiException("cannot decode appVersionId : " + appVersionId);
         }
