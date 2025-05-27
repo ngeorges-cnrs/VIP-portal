@@ -46,8 +46,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestBody;
 import jakarta.validation.Valid;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.util.List;
 
 @RestController
@@ -78,7 +76,7 @@ public class ApplicationController extends ApiController {
         try {
             Application app = applicationBusiness.getApplication(applicationId);
             if (app == null) {
-                throw new ApiException("Not found"); // XXX should 404/403 ?
+                throw new ApiException("Not found");
             }
             return app;
         } catch (BusinessException e) {
@@ -86,19 +84,11 @@ public class ApplicationController extends ApiController {
         }
     }
 
-    // XXX create POST/PUT vs id
-    // @RequestMapping(method = RequestMethod.POST)
-    // public Application createApplication() {
-    // }
     @RequestMapping(value = "/{applicationId}", method = RequestMethod.PUT)
     public Application createOrUpdateApplication(@PathVariable String applicationId,
                                                  @RequestBody @Valid Application app) throws ApiException {
         logMethodInvocation(logger, "createOrUpdateApplication", applicationId);
         try {
-            // XXX name consistency, idempotency, ...
-            // if (!(app.getName() == applicationId)) {
-            //    throw new ApiException("Invalid");
-            //}
             Application existingApp = applicationBusiness.getApplication(applicationId);
             if (existingApp == null) {
                 applicationBusiness.add(app);

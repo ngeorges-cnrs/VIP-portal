@@ -48,8 +48,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestBody;
 import jakarta.validation.Valid;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -115,7 +113,7 @@ public class AppVersionController extends ApiController {
         try {
             AppVersion appVersion = appVersionBusiness.getVersion(input.appName, input.version);
             if (appVersion == null) {
-                throw new ApiException("Not found"); // XXX should 404/403 ?
+                throw new ApiException("Not found");
             }
             return appVersion;
         } catch (BusinessException e) {
@@ -129,7 +127,6 @@ public class AppVersionController extends ApiController {
         return getAppVersion(appVersionIdFirstPart + "/" + appVersionIdSecondPart);
     }
 
-    // XXX create POST/PUT vs id, idempotency, overwrite...
     @RequestMapping(value = "/{appVersionId}", method = RequestMethod.PUT)
     public AppVersion createOrUpdateAppVersion(@PathVariable String appVersionId,
                                                @RequestBody @Valid AppVersion appVersion) throws ApiException {
