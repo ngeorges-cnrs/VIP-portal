@@ -213,7 +213,7 @@ function fillInInputs(fileName, dataArray) {
     if (dataArray.visu === "visu") {
         throw "Vizualisation found in the GATE macro files. Please remove any vis commands and start again.";
     }
-    var inputsList = "gateInput = " + fileName + ", macfileName = " + mainMacFileName;
+    var inputsList = "gateInput = " + fileName + ", macfileName = " + dataArray.macFilesArray[0];
     return inputsList;
 }
 
