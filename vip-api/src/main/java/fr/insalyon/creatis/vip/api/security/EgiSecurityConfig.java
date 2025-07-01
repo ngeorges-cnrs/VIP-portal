@@ -66,29 +66,20 @@ public class EgiSecurityConfig {
     public SecurityFilterChain egiFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests((authorize) -> authorize.anyRequest().permitAll())
+                // requestMatchers("/**")
+                //.authorizeHttpRequests((authorize) -> authorize.anyRequest().hasRole("USER"))
                 .oauth2Login((oauth2)->oauth2
                         .authorizationEndpoint((authorization)->authorization
                                 .baseUri("/oauth2/authorize-client")
-                                .authorizationRequestRepository(authorizationRequestRepository()))
+                                .authorizationRequestRepository(new HttpSessionOAuth2AuthorizationRequestRepository()))
                         .tokenEndpoint((token)->token
-                                .accessTokenResponseClient(accessTokenResponseClient()))
+                                .accessTokenResponseClient(new DefaultAuthorizationCodeTokenResponseClient()))
                         .defaultSuccessUrl("/rest/loginEgi")
                         .failureUrl("/loginFailure"))
                 .cors(Customizer.withDefaults())
                 .headers((headers) -> headers.frameOptions((frameOptions) -> frameOptions.sameOrigin()))
                 .csrf((csrf) -> csrf.disable());
         return http.build();
-    }
-
-    @Bean
-    public AuthorizationRequestRepository<OAuth2AuthorizationRequest> authorizationRequestRepository() {
-        return new HttpSessionOAuth2AuthorizationRequestRepository();
-    }
-
-    @Bean
-    public OAuth2AccessTokenResponseClient<OAuth2AuthorizationCodeGrantRequest> accessTokenResponseClient() {
-        DefaultAuthorizationCodeTokenResponseClient accessTokenResponseClient = new DefaultAuthorizationCodeTokenResponseClient();
-        return accessTokenResponseClient;
     }
 
     /*
