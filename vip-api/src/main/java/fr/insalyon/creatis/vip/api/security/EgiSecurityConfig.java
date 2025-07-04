@@ -31,6 +31,7 @@
  */
 package fr.insalyon.creatis.vip.api.security;
 
+import fr.insalyon.creatis.vip.api.security.egi.PKCETest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -77,7 +78,9 @@ public class EgiSecurityConfig {
         // ServerOAuth2AuthorizationRequestResolver
         DefaultOAuth2AuthorizationRequestResolver resolver =
                 new DefaultOAuth2AuthorizationRequestResolver(repo, "/oauth2/authorize-client");
-        resolver.setAuthorizationRequestCustomizer(OAuth2AuthorizationRequestCustomizers.withPkce());
+        //resolver.setAuthorizationRequestCustomizer(OAuth2AuthorizationRequestCustomizers.withPkce());
+        resolver.setAuthorizationRequestCustomizer(PKCETest.withPkce());
+
 
         http
                 .authorizeHttpRequests((authorize) -> authorize.anyRequest().permitAll())
@@ -85,7 +88,7 @@ public class EgiSecurityConfig {
                 //.authorizeHttpRequests((authorize) -> authorize.anyRequest().hasRole("USER"))
                 .oauth2Login((oauth2)->oauth2
                         .authorizationEndpoint((authorization)->authorization
-                                .baseUri("/oauth2/authorize-client")
+                                //.baseUri("/oauth2/authorize-client")
                                 //.authorizationRequestRepository(authorizationRequestRepository)
                                 .authorizationRequestResolver(resolver)
                         )
