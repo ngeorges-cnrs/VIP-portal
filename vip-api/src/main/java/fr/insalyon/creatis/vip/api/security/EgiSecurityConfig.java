@@ -31,6 +31,7 @@
  */
 package fr.insalyon.creatis.vip.api.security;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -40,8 +41,13 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.oauth2.client.endpoint.DefaultAuthorizationCodeTokenResponseClient;
 import org.springframework.security.oauth2.client.endpoint.OAuth2AccessTokenResponseClient;
 import org.springframework.security.oauth2.client.endpoint.OAuth2AuthorizationCodeGrantRequest;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.client.registration.ReactiveClientRegistrationRepository;
 import org.springframework.security.oauth2.client.web.AuthorizationRequestRepository;
+import org.springframework.security.oauth2.client.web.DefaultOAuth2AuthorizationRequestResolver;
 import org.springframework.security.oauth2.client.web.HttpSessionOAuth2AuthorizationRequestRepository;
+import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestCustomizers;
+import org.springframework.security.oauth2.client.web.server.DefaultServerOAuth2AuthorizationRequestResolver;
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.firewall.DefaultHttpFirewall;
@@ -60,10 +66,19 @@ import org.springframework.security.web.firewall.DefaultHttpFirewall;
 @Configuration
 @EnableWebSecurity
 public class EgiSecurityConfig {
+    @Autowired ClientRegistrationRepository repo; // XXX bean?
 
     @Bean
     @Order(2)
     public SecurityFilterChain egiFilterChain(HttpSecurity http) throws Exception {
+        AuthorizationRequestRepository authorizationRequestRepository = new HttpSessionOAuth2AuthorizationRequestRepository();
+        // ReactiveClientRegistrationRepository
+        // OAuth2AuthorizationRequestResolver
+        // ServerOAuth2AuthorizationRequestResolver
+        DefaultOAuth2AuthorizationRequestResolver resolver =
+                new DefaultOAuth2AuthorizationRequestResolver(repo, "/oauth2/authorize-client");
+        resolver.setAuthorizationRequestCustomizer(OAuth2AuthorizationRequestCustomizers.withPkce());
+
         http
                 .authorizeHttpRequests((authorize) -> authorize.anyRequest().permitAll())
                 // requestMatchers("/**")
@@ -71,7 +86,9 @@ public class EgiSecurityConfig {
                 .oauth2Login((oauth2)->oauth2
                         .authorizationEndpoint((authorization)->authorization
                                 .baseUri("/oauth2/authorize-client")
-                                .authorizationRequestRepository(new HttpSessionOAuth2AuthorizationRequestRepository()))
+                                //.authorizationRequestRepository(authorizationRequestRepository)
+                                .authorizationRequestResolver(resolver)
+                        )
                         .tokenEndpoint((token)->token
                                 .accessTokenResponseClient(new DefaultAuthorizationCodeTokenResponseClient()))
                         .defaultSuccessUrl("/rest/loginEgi")
