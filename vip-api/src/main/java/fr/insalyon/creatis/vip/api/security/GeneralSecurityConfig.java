@@ -12,7 +12,12 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.oauth2.client.endpoint.DefaultAuthorizationCodeTokenResponseClient;
 import org.springframework.security.oauth2.client.web.HttpSessionOAuth2AuthorizationRequestRepository;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.firewall.DefaultHttpFirewall;
+
+import org.springframework.util.StringUtils;
+
+import java.util.function.Supplier;
 
 /**
  * Spring security configuration.
@@ -41,7 +46,11 @@ public class GeneralSecurityConfig {
         http.authorizeHttpRequests((authorize) -> authorize.anyRequest().permitAll())
                 .cors(Customizer.withDefaults())
                 .headers((headers) -> headers.frameOptions((frameOptions) -> frameOptions.sameOrigin()))
-                .csrf((csrf) -> csrf.disable());
+                .csrf((csrf) -> csrf
+                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                        .csrfTokenRequestHandler(new VipCsrfTokenHandler())
+                );
+                //.csrf((csrf) -> csrf.disable());
         if (oidcLoginConfig.getLoginProviders().size() > 0) {
             http.oauth2Login((oauth2)->oauth2
                     .clientRegistrationRepository(oidcLoginConfig.getClientRegistrationRepository())

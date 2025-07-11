@@ -48,6 +48,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.stereotype.Service;
 
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -122,7 +123,12 @@ public class ApiSecurityConfig {
                 .anonymous((anonymous) -> anonymous.disable())
                 .cors(Customizer.withDefaults())
                 .headers((headers) -> headers.frameOptions((frameOptions) -> frameOptions.sameOrigin()))
-                .csrf((csrf) -> csrf.disable());
+                .csrf((csrf) -> csrf
+                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                        .csrfTokenRequestHandler(new VipCsrfTokenHandler())
+                );
+                //.csrf(Customizer.withDefaults());
+                //.csrf((csrf) -> csrf.disable());
         // API key authentication always active
         http.addFilterBefore(apikeyAuthenticationFilter(), BasicAuthenticationFilter.class);
         // OIDC Bearer token authentication, if enabled
