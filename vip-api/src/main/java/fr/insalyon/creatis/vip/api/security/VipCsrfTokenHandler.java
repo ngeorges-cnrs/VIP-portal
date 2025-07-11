@@ -4,10 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.web.csrf.CsrfToken;
-import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
-import org.springframework.security.web.csrf.CsrfTokenRequestHandler;
-import org.springframework.security.web.csrf.XorCsrfTokenRequestAttributeHandler;
+import org.springframework.security.web.csrf.*;
 import org.springframework.util.StringUtils;
 
 import java.util.function.Supplier;
@@ -23,12 +20,13 @@ class VipCsrfTokenHandler implements CsrfTokenRequestHandler {
          * Always use XorCsrfTokenRequestAttributeHandler to provide BREACH protection of
          * the CsrfToken when it is rendered in the response body.
          */
-        this.xor.handle(request, response, csrfToken);
+        this.plain.handle(request, response, csrfToken);
         /*
          * Render the token value to a cookie by causing the deferred token to be loaded.
          */
-        csrfToken.get();
-        logger.info("XXX handle name={} attr={}", CsrfToken.class.getName(), request.getAttribute(CsrfToken.class.getName()));
+        CsrfToken token = csrfToken.get();
+        logger.info("XXX handle name={} attr={} token={}",
+                CsrfToken.class.getName(), request.getAttribute(CsrfToken.class.getName()), token.getToken());
     }
 
     @Override
@@ -45,8 +43,10 @@ class VipCsrfTokenHandler implements CsrfTokenRequestHandler {
          * when a server-side rendered form includes the _csrf request parameter as a
          * hidden input.
          */
-        String token = (StringUtils.hasText(headerValue) ? this.plain : this.xor).resolveCsrfTokenValue(request, csrfToken);
-        logger.info("XXX token=", token);
-        return token;
+        CookieCsrfTokenRepository repo = CookieCsrfTokenRepository.withHttpOnlyFalse();
+        String resultToken = (StringUtils.hasText(headerValue) ? this.plain : this.plain).resolveCsrfTokenValue(request, csrfToken);
+        logger.info("XXX resolve in={} header={} parameter={} result={}",
+                csrfToken.getToken(), csrfToken.getHeaderName(), csrfToken.getParameterName(), resultToken);
+        return resultToken;
     }
 }
