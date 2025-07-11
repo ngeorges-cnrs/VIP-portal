@@ -44,9 +44,10 @@ class VipCsrfTokenHandler implements CsrfTokenRequestHandler {
          * hidden input.
          */
         CookieCsrfTokenRepository repo = CookieCsrfTokenRepository.withHttpOnlyFalse();
+        CsrfToken token2 = repo.loadToken(request);
         String resultToken = (StringUtils.hasText(headerValue) ? this.plain : this.plain).resolveCsrfTokenValue(request, csrfToken);
-        logger.info("XXX resolve in={} header={} parameter={} result={}",
-                csrfToken.getToken(), csrfToken.getHeaderName(), csrfToken.getParameterName(), resultToken);
-        return resultToken;
+        logger.info("XXX resolve in={} header={} parameter={} result={} token2={}",
+                csrfToken.getToken(), csrfToken.getHeaderName(), csrfToken.getParameterName(), resultToken, token2.getToken());
+        return token2.getToken(); // XXX csrfToken arg unused ??
     }
 }
