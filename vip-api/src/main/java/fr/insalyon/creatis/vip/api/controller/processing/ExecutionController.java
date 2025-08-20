@@ -65,7 +65,7 @@ public class ExecutionController extends ApiController {
         this.executionBusiness = executionBusiness;
     }
 
-    @RequestMapping
+    @GetMapping
     public List<Execution> listExecutions(
             @RequestParam(required = false) String studyIdentifier,
             @RequestParam(required = false) Integer offset,
@@ -89,19 +89,19 @@ public class ExecutionController extends ApiController {
         return executionBusiness.listExecutions(limit);
     }
 
-    @RequestMapping("examples")
+    @GetMapping("examples")
     public List<Execution> listExecutions() throws ApiException {
         logMethodInvocation(logger, "listExamples");
         return executionBusiness.listExamples();
     }
 
-    @RequestMapping("examples/{exampleId}")
+    @GetMapping("examples/{exampleId}")
     public Execution getExample(@PathVariable String exampleId) throws ApiException {
         logMethodInvocation(logger, "getExample", exampleId);
         return executionBusiness.getExecution(exampleId, false);
     }
 
-    @RequestMapping(value = "count", produces = "text/plain;charset=UTF-8")
+    @GetMapping(value = "count", produces = "text/plain;charset=UTF-8")
     public String countExecutions(
             @RequestParam(required = false) String studyIdentifier)
             throws ApiException {
@@ -113,7 +113,7 @@ public class ExecutionController extends ApiController {
         return String.valueOf(executionBusiness.countExecutions());
     }
 
-    @RequestMapping("/{executionId}")
+    @GetMapping("/{executionId}")
     public Execution getExecution(@PathVariable String executionId)
             throws ApiException {
         logMethodInvocation(logger, "getExecution", executionId);
@@ -122,7 +122,7 @@ public class ExecutionController extends ApiController {
         return executionBusiness.getExecution(executionId, false);
     }
     
-    @RequestMapping("/{executionId}/summary")
+    @GetMapping("/{executionId}/summary")
     public Execution getExecutionSummary(@PathVariable String executionId)
             throws ApiException {
         logMethodInvocation(logger, "getExecutionSummary", executionId);
@@ -149,7 +149,7 @@ public class ExecutionController extends ApiController {
         return executionBusiness.getExecution(execId, false);
     }
 
-    @RequestMapping("/{executionId}/results")
+    @GetMapping("/{executionId}/results")
     public List<PathProperties> getExecutionResults(
             @PathVariable String executionId) throws ApiException {
         logMethodInvocation(logger, "getExecutionResults", executionId);
@@ -157,14 +157,14 @@ public class ExecutionController extends ApiController {
         return executionBusiness.getExecutionResultsPaths(executionId);
     }
 
-    @RequestMapping(value = "/{executionId}/stdout", produces = "text/plain;charset=UTF-8")
+    @GetMapping(value = "/{executionId}/stdout", produces = "text/plain;charset=UTF-8")
     public String getStdout(@PathVariable String executionId) throws ApiException {
         logMethodInvocation(logger, "getStdout", executionId);
         executionBusiness.checkIfUserCanAccessExecution(executionId);
         return executionBusiness.getLog(executionId, "out");
     }
 
-    @RequestMapping(value= "/{executionId}/stderr", produces = "text/plain;charset=UTF-8")
+    @GetMapping(value= "/{executionId}/stderr", produces = "text/plain;charset=UTF-8")
     public String getStderr(@PathVariable String executionId) throws ApiException {
         logMethodInvocation(logger, "getStderr", executionId);
         executionBusiness.checkIfUserCanAccessExecution(executionId);

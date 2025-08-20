@@ -96,8 +96,7 @@ public class ApiKeyController extends ApiController{
         }
     }
 
-    @RequestMapping(value = "/{storageIdentifier}",
-                    method = RequestMethod.DELETE)
+    @DeleteMapping("/{storageIdentifier}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteApiKey(@PathVariable String storageIdentifier)
             throws ApiException {

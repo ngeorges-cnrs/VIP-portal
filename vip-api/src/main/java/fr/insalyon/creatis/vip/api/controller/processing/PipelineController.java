@@ -36,12 +36,12 @@ import fr.insalyon.creatis.vip.api.business.PipelineBusiness;
 import fr.insalyon.creatis.vip.api.controller.ApiController;
 import fr.insalyon.creatis.vip.api.exception.ApiException;
 import fr.insalyon.creatis.vip.api.model.Pipeline;
-import fr.insalyon.creatis.vip.application.client.bean.Application;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -66,20 +66,20 @@ public class PipelineController extends ApiController {
         this.pipelineBusiness = pipelineBusiness;
     }
 
-    @RequestMapping
+    @GetMapping
     public List<Pipeline> listPipelines(
             @RequestParam(required = false) String studyIdentifier) throws ApiException {
         logMethodInvocation(logger, "listPipelines", studyIdentifier);
         return pipelineBusiness.listPipelines(studyIdentifier);
     }
 
-    @RequestMapping(params = "public")
+    @GetMapping(params = "public")
     public List<Pipeline> listPublicPipelines() throws ApiException {
         logMethodInvocation(logger, "listPublicPipelines");
         return pipelineBusiness.listPublicPipelines();
     }
 
-    @RequestMapping("{pipelineId}")
+    @GetMapping("{pipelineId}")
     public Pipeline getPipeline(@PathVariable String pipelineId) throws ApiException {
         logMethodInvocation(logger, "getPipeline", pipelineId);
         try {
@@ -91,7 +91,7 @@ public class PipelineController extends ApiController {
         return pipelineBusiness.getPipelineWithoutResultsDirectory(pipelineId);
     }
 
-    @RequestMapping(value = "{pipelineId}", params = {"format=boutiques"})
+    @GetMapping(value = "{pipelineId}", params = {"format=boutiques"})
     public BoutiquesDescriptor getBoutiquesDescriptor(@PathVariable String pipelineId) throws ApiException {
         logMethodInvocation(logger, "getBoutiquesDescriptor", pipelineId);
         try {
@@ -103,19 +103,19 @@ public class PipelineController extends ApiController {
         return pipelineBusiness.getBoutiquesDescriptor(pipelineId);
     }
 
-    @RequestMapping("{pipelineIdFirstPart}/{pipelineIdSecondPart}")
+    @GetMapping("{pipelineIdFirstPart}/{pipelineIdSecondPart}")
     public Pipeline getPipeline(@PathVariable String pipelineIdFirstPart,
                                 @PathVariable String pipelineIdSecondPart) throws ApiException {
         return getPipeline(pipelineIdFirstPart + "/" + pipelineIdSecondPart);
     }
 
-    @RequestMapping(value = "{pipelineIdFirstPart}/{pipelineIdSecondPart}", params = {"format=boutiques"})
+    @GetMapping(value = "{pipelineIdFirstPart}/{pipelineIdSecondPart}", params = {"format=boutiques"})
     public BoutiquesDescriptor getBoutiquesDescriptor(@PathVariable String pipelineIdFirstPart,
                                 @PathVariable String pipelineIdSecondPart) throws ApiException {
         return getBoutiquesDescriptor(pipelineIdFirstPart + "/" + pipelineIdSecondPart);
     }
 
-    @RequestMapping(params = "pipelineId")
+    @GetMapping(params = "pipelineId")
     public Pipeline getPipelineWithRequestParam(@RequestParam String pipelineId) throws ApiException {
         return getPipeline(pipelineId);
     }

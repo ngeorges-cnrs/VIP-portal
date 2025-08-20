@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -22,25 +23,24 @@ public class StatsController extends ApiController {
     private final StatsApiBusiness statsApiBusiness;
 
     @Autowired
-    public StatsController(
-            StatsApiBusiness statsApiBusiness) {
+    public StatsController(StatsApiBusiness statsApiBusiness) {
         this.statsApiBusiness = statsApiBusiness;
     }
 
-    @RequestMapping("/users")
+    @GetMapping("/users")
     public UsersNumber getAllUsersRegisteredNumber() throws ApiException {
         logMethodInvocation(logger, "getAllUsersRegisteredNumber");
         return statsApiBusiness.getUsersRegisteredNumber(null, null);
     }
 
-    @RequestMapping("/users/{start}")
+    @GetMapping("/users/{start}")
     public UsersNumber getUsersRegisteredNumberFromDate(
             @PathVariable("start") String startString) throws ApiException {
         logMethodInvocation(logger, "getUsersRegisteredNumberFromDate", startString);
         return statsApiBusiness.getUsersRegisteredNumber(startString, null);
     }
 
-    @RequestMapping("/users/{start}/{end}")
+    @GetMapping("/users/{start}/{end}")
     public UsersNumber getUsersRegisteredNumberBetweenDates(
             @PathVariable("start") String startString,
             @PathVariable("end") String endString) throws ApiException {
@@ -48,7 +48,7 @@ public class StatsController extends ApiController {
         return statsApiBusiness.getUsersRegisteredNumber(startString, endString);
     }
 
-    @RequestMapping("/service/{service}")
+    @GetMapping("/service/{service}")
     public UsersList getAllUsersForStats(
             @PathVariable String service) throws ApiException {
         logMethodInvocation(logger, "getAllUsersForStats");
@@ -56,7 +56,7 @@ public class StatsController extends ApiController {
         return statsApiBusiness.getAllUsers();
     }
 
-    @RequestMapping("/service/{service}/{start}")
+    @GetMapping("/service/{service}/{start}")
     public UsersList getUsersForStatsFromDate(
             @PathVariable String service,
             @PathVariable("start") String startString) throws ApiException {
@@ -65,7 +65,7 @@ public class StatsController extends ApiController {
         return statsApiBusiness.getAllUsersFromDate(startString);
     }
 
-    @RequestMapping("/service/{service}/{start}/{end}")
+    @GetMapping("/service/{service}/{start}/{end}")
     public UsersList getUsersForStatsBetweenDates(
             @PathVariable String service,
             @PathVariable("start") String startString,
@@ -75,14 +75,14 @@ public class StatsController extends ApiController {
         return statsApiBusiness.getAllUsersBetweenDates(startString, endString);
     }
 
-    @RequestMapping("/country/{country}")
+    @GetMapping("/country/{country}")
     public UsersList getAllUsersForStatsFromCountry(
             @PathVariable String country) throws ApiException {
         logMethodInvocation(logger, "getAllUsersForStatsFromCountry", country);
         return statsApiBusiness.getAllUsersFromCountry(country);
     }
 
-    @RequestMapping("/country/{country}/{service}")
+    @GetMapping("/country/{country}/{service}")
     public UsersList getAllUsersForStatsFromCountryAndService(
             @PathVariable String country, @PathVariable String service)
             throws ApiException {
@@ -91,7 +91,7 @@ public class StatsController extends ApiController {
         return statsApiBusiness.getAllUsersFromCountry(country);
     }
 
-    @RequestMapping("/country/{country}/{service}/{start}")
+    @GetMapping("/country/{country}/{service}/{start}")
     public UsersList getUsersForStatsFromCountryFromDate(
             @PathVariable String country,
             @PathVariable String service,
@@ -101,7 +101,7 @@ public class StatsController extends ApiController {
         return statsApiBusiness.getAllUsersFromCountryFromDate(country, startString);
     }
 
-    @RequestMapping("/country/{country}/{service}/{start}/{end}")
+    @GetMapping("/country/{country}/{service}/{start}/{end}")
     public UsersList getUsersForStatsFromCountryBetweenDates(
             @PathVariable String country,
             @PathVariable String service,
@@ -112,14 +112,14 @@ public class StatsController extends ApiController {
         return statsApiBusiness.getAllUsersFromCountryBetweenDates(country, startString, endString);
     }
 
-    @RequestMapping("/institute/{institution}")
+    @GetMapping("/institute/{institution}")
     public UsersList getAllUsersForStatsFromInstitution(
             @PathVariable String institution) throws ApiException {
         logMethodInvocation(logger, "getAllUsersForStatsFromInstitution", institution);
         return statsApiBusiness.getAllUsersFromInstitution(institution);
     }
 
-    @RequestMapping("/institute/{institution}/{service}")
+    @GetMapping("/institute/{institution}/{service}")
     public UsersList getAllUsersForStatsFromInstitutionAndService(
             @PathVariable String institution, @PathVariable String service)
             throws ApiException {
@@ -128,7 +128,7 @@ public class StatsController extends ApiController {
         return statsApiBusiness.getAllUsersFromInstitution(institution);
     }
 
-    @RequestMapping("/institute/{institution}/{service}/{start}")
+    @GetMapping("/institute/{institution}/{service}/{start}")
     public UsersList getUsersForStatsFromInstitutionFromDate(
             @PathVariable String institution,
             @PathVariable String service,
@@ -138,7 +138,7 @@ public class StatsController extends ApiController {
         return statsApiBusiness.getAllUsersFromInstitutionFromDate(institution, startString);
     }
 
-    @RequestMapping("/institute/{institution}/{service}/{start}/{end}")
+    @GetMapping("/institute/{institution}/{service}/{start}/{end}")
     public UsersList getUsersForStatsFromInstitutionBetweenDates(
             @PathVariable String institution,
             @PathVariable String service,
