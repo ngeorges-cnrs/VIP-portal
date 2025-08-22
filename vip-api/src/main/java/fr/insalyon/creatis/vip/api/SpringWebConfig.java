@@ -33,6 +33,7 @@ package fr.insalyon.creatis.vip.api;
 
 import fr.insalyon.creatis.vip.api.business.VipConfigurer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.web.servlet.config.annotation.*;
@@ -52,6 +53,7 @@ import static fr.insalyon.creatis.vip.api.CarminProperties.CORS_AUTHORIZED_DOMAI
  */
 @EnableWebMvc
 @Configuration
+// XXX? @ComponentScan(basePackages = "fr.insalyon.creatis.vip.api")
 public class SpringWebConfig implements WebMvcConfigurer {
 
     private final Environment env;
