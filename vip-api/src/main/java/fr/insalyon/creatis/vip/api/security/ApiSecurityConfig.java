@@ -60,6 +60,17 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 import org.springframework.security.web.firewall.DefaultHttpFirewall;
 import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
 import org.springframework.security.web.util.matcher.RegexRequestMatcher;
+/*
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.web.filter.GenericFilterBean;
+import java.io.IOException;
+import jakarta.servlet.ServletException;
+ */
 
 import java.util.function.Supplier;
 
@@ -94,6 +105,26 @@ public class ApiSecurityConfig {
         this.oidcResolver = oidcResolver;
     }
 
+    /*
+    private class CustomCookieFilter extends GenericFilterBean {
+        @Override
+        public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+                throws IOException, ServletException {
+            HttpServletRequest httpRequest = (HttpServletRequest) request;
+            Cookie[] cookies = httpRequest.getCookies();
+            String value = null;
+            if (cookies != null) {
+                for (Cookie cookie : cookies) {
+                    if ("vip-session-cookie".equals(cookie.getName())) {
+                        value = cookie.getValue();
+                        break;
+                    }
+                }
+            }
+            chain.doFilter(request, response);
+        }
+    }*/
+
     @Bean
     @Order(1)
     public SecurityFilterChain apiFilterChain(HttpSecurity http) throws Exception {
@@ -125,6 +156,10 @@ public class ApiSecurityConfig {
                 .csrf((csrf) -> csrf.disable());
         // API key authentication always active
         http.addFilterBefore(apikeyAuthenticationFilter(), BasicAuthenticationFilter.class);
+        // XXX Cookie authentication
+        // http.addFilterBefore(new CustomCookieFilter(), BasicAuthenticationFilter.class);
+        //http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS));
+
         // OIDC Bearer token authentication, if enabled
         if (oidcConfig.isOIDCActive()) {
             // We configure each OIDC server with issuerLocation instead of jwks_uri: on first token verification,
