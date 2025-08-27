@@ -49,25 +49,30 @@ public class ApikeyAuthenticationToken extends AbstractAuthenticationToken {
 
     private UserDetails principal;
     private String apikey;
+    private String cookie;
 
-    public ApikeyAuthenticationToken(String apikey) {
+    public ApikeyAuthenticationToken(String apikey, String cookie) {
         super(null);
         this.principal = null;
         this.apikey = apikey;
+        this.cookie = cookie;
         setAuthenticated(false);
     }
 
-    public ApikeyAuthenticationToken(UserDetails principal, String apikey, String role) {
+    public ApikeyAuthenticationToken(UserDetails principal, String apikey, String cookie, String role) {
         super(AuthorityUtils.createAuthorityList("ROLE_" + role));
         this.principal = principal;
         this.apikey = apikey;
+        this.cookie = cookie;
         super.setAuthenticated(true);
     }
 
     @Override
     public Object getCredentials() {
-        return apikey;
+        return cookie != null ? cookie : apikey;
     }
+
+    public Boolean isCookie() { return cookie != null; }
 
     @Override
     public Object getPrincipal() {
@@ -88,5 +93,6 @@ public class ApikeyAuthenticationToken extends AbstractAuthenticationToken {
     public void eraseCredentials() {
         super.eraseCredentials();
         apikey = null;
+        cookie = null;
     }
 }

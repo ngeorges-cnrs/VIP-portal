@@ -31,6 +31,8 @@
  */
 package fr.insalyon.creatis.vip.api.security.apikey;
 
+import fr.insalyon.creatis.vip.core.client.view.CoreConstants;
+import jakarta.servlet.http.Cookie;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationServiceException;
@@ -85,8 +87,18 @@ public class ApikeyAuthenticationFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain) throws ServletException, IOException {
         String apikey = request.getHeader(apikeyHeader);
+        String sessionCookie = null;
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie c : cookies) {
+                if (CoreConstants.COOKIES_SESSION.equals(c.getName())) {
+                    sessionCookie = c.getValue();
+                    break;
+                }
+            }
+        }
 
-        if (apikey == null) {
+        if (apikey == null && sessionCookie == null) {
             logger.debug("no apikey header " + apikeyHeader +" found.");
             filterChain.doFilter(request, response);
             return;
@@ -95,7 +107,7 @@ public class ApikeyAuthenticationFilter extends OncePerRequestFilter {
 
             logger.debug("apikey header found.");
 
-            ApikeyAuthenticationToken authRequest = new ApikeyAuthenticationToken(apikey);
+            ApikeyAuthenticationToken authRequest = new ApikeyAuthenticationToken(apikey, sessionCookie);
             Authentication authResult = this.authenticationProvider.authenticate(authRequest);
 
             logger.debug("Authentication success for : " + authResult);

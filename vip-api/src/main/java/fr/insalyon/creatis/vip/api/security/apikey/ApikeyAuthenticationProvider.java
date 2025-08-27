@@ -93,11 +93,19 @@ public class ApikeyAuthenticationProvider implements
 
         Assert.isInstanceOf(ApikeyAuthenticationToken.class, authentication,
                 "Only ApikeyAuthenticationToken is supported");
+        ApikeyAuthenticationToken authToken = (ApikeyAuthenticationToken)authentication;
 
         User vipUser;
-        String apikey = authentication.getCredentials().toString();
+        String apikey = null, cookie = null;
+
         try {
-            vipUser = userDAO.getUserByApikey(apikey);
+            if (authToken.isCookie()) {
+                cookie = authentication.getCredentials().toString();
+                vipUser = userDAO.getUserBySession(cookie);
+            } else {
+                apikey = authentication.getCredentials().toString();
+                vipUser = userDAO.getUserByApikey(apikey);
+            }
         } catch (DAOException e) {
             logger.error("error when getting user by apikey. Doing as if there is an auth error", e);
             throw new BadCredentialsException(
@@ -137,7 +145,7 @@ public class ApikeyAuthenticationProvider implements
             logger.error("Error resetting failed auth attempts. Ignoring", e);
         }
             return new ApikeyAuthenticationToken(
-                    springUser, apikey,
+                    springUser, apikey, cookie,
                     vipUser.getLevel().name().toUpperCase());
     }
 
