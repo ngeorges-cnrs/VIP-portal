@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>VIP</title>
+    <link rel="icon" type="image/png" href="images/core/vip-logo-without-text.png" />
+</head>
+<body>
+Hello from VIP.<br>
+Are you logged in: <span id="status"></span>.<br>
+<br>
+<button id="login" onclick="doLogin('admin@example.com','admin')">Login</button><br>
+<button id="logout" onclick="doLogout()">Logout</button><br>
+
+
+<script>
+    function setCookie(value_session, exdays) {
+        const d = new Date();
+        d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+        let expires = "expires="+d.toUTCString();
+        console.log("XXX expires=",expires);
+        document.cookie = "vip-cookie-session" + "=" + value_session + ";" + expires + ";path=/";
+    }
+
+    function getCookie(cName) {
+        let cookieExist = true;
+        const name = cName + "=";
+        const cDecoded = decodeURIComponent(document.cookie);
+        const cArr = cDecoded.split('; ');
+        let res;
+        cArr.forEach(val => {
+          if (val.indexOf(name) === 0) res = val.substring(name.length);
+        })
+        return res;
+    }
+    function updateStatus() {
+        // XXX this checks that a cookie exists, but not that it is valid
+        const sessionCookie = getCookie("vip-cookie-session");
+        console.log("XXX status: sessionCookie="+sessionCookie);
+        document.getElementById("status").innerHTML = sessionCookie ? "yes" : "no";
+        // could also toggle buttons visibility...
+        // get apps ...
+    }
+
+    async function doLogin(username, password) {
+        const data = await fetch('rest/session', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ "username": username, "password" : password})
+        })
+        if (data.ok == true){
+            const result = await data.json();
+            const sessionCookie = result.httpHeaderValue;
+            console.log("login ok, cookie=" + sessionCookie);
+            setCookie(sessionCookie, 7);
+            updateStatus();
+            return result;
+        } else {
+           return null;
+        }
+    }
+
+    async function doLogout() {
+        const data = await fetch('rest/admin/logout', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({})
+        })
+        if (data.ok == true){
+            console.log("logout ok");
+            setCookie("", -7);
+            updateStatus();
+            return true;
+        } else { // XXX 401 vs other cases (should be a blind success server-side instead)
+            console.log("logout failed, clearing anyways");
+            setCookie("", -7);
+            updateStatus();
+           return null;
+        }
+    }
+
+    // main
+    updateStatus();
+</script>
+</body>
+</html>
