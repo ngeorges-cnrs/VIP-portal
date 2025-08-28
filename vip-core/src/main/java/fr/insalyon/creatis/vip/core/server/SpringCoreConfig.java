@@ -24,6 +24,7 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.LazyConnectionDataSourceProxy;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.sql.DataSource;
 import java.io.IOException;
@@ -50,7 +51,23 @@ import static org.springframework.util.ResourceUtils.CLASSPATH_URL_PREFIX;
  */
 @Configuration
 @EnableTransactionManagement
-@ComponentScan(basePackages = "fr.insalyon.creatis.vip")
+@ComponentScan(basePackages = { // exclude: api,local  (portal?)
+/*        "fr.insalyon.creatis.vip.api",
+        "fr.insalyon.creatis.vip.application",
+        "fr.insalyon.creatis.vip.applicationimporter",
+        "fr.insalyon.creatis.vip.core",
+        "fr.insalyon.creatis.vip.datamanager",
+        "fr.insalyon.creatis.vip.docs",
+        "fr.insalyon.creatis.vip.gatelab",
+        "fr.insalyon.creatis.vip.portal",
+        "fr.insalyon.creatis.vip.publication",
+        "fr.insalyon.creatis.vip.social",
+        "fr.insalyon.creatis.vip.visualization"
+ */
+        "fr.insalyon.creatis.vip"
+        }
+        , excludeFilters = @ComponentScan.Filter(type=FilterType.ANNOTATION, value=RestController.class)
+        )
 public class SpringCoreConfig {
 
     private static final Logger logger = LoggerFactory.getLogger(SpringCoreConfig.class);

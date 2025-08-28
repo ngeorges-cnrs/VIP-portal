@@ -166,6 +166,12 @@ knowledge of the CeCILL-B license and that you accept its terms.
             <version>${project.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>fr.insalyon.creatis</groupId>
+            <artifactId>vip-newapi2</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <!-- vip-local is a dependency but is not included in the default producion war
         See the war plugin configuration-->
         <dependency>

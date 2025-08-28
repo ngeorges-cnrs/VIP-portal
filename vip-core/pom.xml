@@ -170,6 +170,7 @@ knowledge of the CeCILL-B license and that you accept its terms.
             <artifactId>jackson-datatype-jsr310</artifactId>
             <version>${jackson.version}</version>
         </dependency>
+
     </dependencies>
 
     <build>

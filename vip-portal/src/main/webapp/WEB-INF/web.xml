@@ -159,7 +159,37 @@ knowledge of the CeCILL-B license and that you accept its terms.
         <url-pattern>/fr.insalyon.creatis.vip.portal.Main/applicationimporterservice</url-pattern>
     </servlet-mapping>
     <!--End Application Importer Module-->
-    <!-- REST API -->
+    <!-- Spring core config -->
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+    <context-param>
+        <param-name>contextClass</param-name>
+        <param-value>org.springframework.web.context.support.AnnotationConfigWebApplicationContext</param-value>
+    </context-param>
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>fr.insalyon.creatis.vip.core.server.SpringCoreConfig</param-value>
+    </context-param>
+    <!-- /api2 API -->
+    <servlet>
+        <servlet-name>newapi2</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <init-param>
+            <param-name>contextClass</param-name>
+            <param-value>org.springframework.web.context.support.AnnotationConfigWebApplicationContext</param-value>
+        </init-param>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>fr.insalyon.creatis.vip.newapi2.Api2Config</param-value>
+        </init-param>
+        <load-on-startup>2</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>newapi2</servlet-name>
+        <url-pattern>/api2/*</url-pattern>
+    </servlet-mapping>-->
+    <!-- /rest API -->
     <servlet>
         <servlet-name>RestAPI</servlet-name>
         <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
@@ -169,14 +199,16 @@ knowledge of the CeCILL-B license and that you accept its terms.
         </init-param>
          <init-param>
             <param-name>contextConfigLocation</param-name>
-            <param-value>fr.insalyon.creatis.vip.core.server.SpringCoreConfig</param-value>
+            <param-value>fr.insalyon.creatis.vip.api.server.Api1Config</param-value>
         </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
     <servlet-mapping>
         <servlet-name>RestAPI</servlet-name>
-        <url-pattern>/rest/*</url-pattern>
+        <url-pattern>/api1/*</url-pattern>
     </servlet-mapping>
+    <!-- common SecurityFilterChain -->
+    <!--
     <filter>
         <filter-name>springSecurityFilterChain</filter-name>
         <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
@@ -184,8 +216,7 @@ knowledge of the CeCILL-B license and that you accept its terms.
     <filter-mapping>
         <filter-name>springSecurityFilterChain</filter-name>
         <url-pattern>/*</url-pattern>
-    </filter-mapping>
-    <!-- END REST API -->
+    </filter-mapping>-->
     <!-- Visualization API -->
     <servlet>
         <servlet-name>VisualizationService</servlet-name>

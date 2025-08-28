@@ -33,8 +33,11 @@ package fr.insalyon.creatis.vip.api;
 
 import fr.insalyon.creatis.vip.api.business.VipConfigurer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.core.env.Environment;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.config.annotation.*;
 
 import java.util.Collections;
@@ -50,8 +53,17 @@ import static fr.insalyon.creatis.vip.api.CarminProperties.CORS_AUTHORIZED_DOMAI
  *
  * Modified by khalilkes
  */
-@EnableWebMvc
+
+public class SpringWebConfig {}
+
+/*
 @Configuration
+//@ComponentScan  // OK?
+//@EnableWebMvc
+//@ComponentScan(includeFilters = @ComponentScan.Filter(RestController.class))
+//@ComponentScan(basePackages = "fr.insalyon.creatis.vip.api",
+//        includeFilters = @ComponentScan.Filter(RestController.class),
+//        excludeFilters = @ComponentScan.Filter(type=FilterType.REGEX, pattern=".*newapi2.*"))
 public class SpringWebConfig implements WebMvcConfigurer {
 
     private final Environment env;
@@ -88,11 +100,10 @@ public class SpringWebConfig implements WebMvcConfigurer {
             .allowedOrigins(env.getRequiredProperty(CORS_AUTHORIZED_DOMAINS, String[].class));
     }
 
-    /*
-     to verify that the proxy is still valid each day
-     */
+    // to verify that the proxy is still valid each day
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(vipConfigurer);
     }
 }
+*/
