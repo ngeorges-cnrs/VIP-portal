@@ -53,7 +53,9 @@ import static org.springframework.util.ResourceUtils.CLASSPATH_URL_PREFIX;
 @EnableTransactionManagement
 @ComponentScan(basePackages = "fr.insalyon.creatis.vip",
         excludeFilters = {
-                @ComponentScan.Filter(type = FilterType.ANNOTATION, value = RestController.class)
+                // XXX abnormal: everything 404 if vip.api.* is excluded, and scanned from SpringWebConfig instead
+                // @ComponentScan.Filter(type=FilterType.REGEX, pattern="fr.insalyon.creatis.vip.api.*"),
+                @ComponentScan.Filter(type=FilterType.REGEX, pattern="fr.insalyon.creatis.vip.newapi.*")
         }
 )
 public class SpringCoreConfig {

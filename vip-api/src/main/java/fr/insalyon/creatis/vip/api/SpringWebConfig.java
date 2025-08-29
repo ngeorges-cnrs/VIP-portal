@@ -55,7 +55,7 @@ import static fr.insalyon.creatis.vip.api.CarminProperties.CORS_AUTHORIZED_DOMAI
  */
 @EnableWebMvc
 @Configuration
-@ComponentScan(includeFilters = @ComponentScan.Filter(type=FilterType.ANNOTATION, value=RestController.class))
+//@ComponentScan // XXX abnormal: this can actually be omitted (cf SpringCoreConfig)
 public class SpringWebConfig implements WebMvcConfigurer {
 
     private final Environment env;

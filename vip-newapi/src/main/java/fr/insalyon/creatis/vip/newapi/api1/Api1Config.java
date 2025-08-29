@@ -8,6 +8,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Configuration
 @EnableWebMvc
-@ComponentScan(includeFilters = @ComponentScan.Filter(type=FilterType.ANNOTATION, value=RestController.class))
+@ComponentScan
 public class Api1Config {
 }
