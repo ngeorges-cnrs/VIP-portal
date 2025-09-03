@@ -1,6 +1,7 @@
 package fr.insalyon.creatis.vip.integrationtest;
 
 import fr.insalyon.creatis.grida.client.GRIDAClient;
+import fr.insalyon.creatis.vip.api.SpringRestApiConfig;
 import fr.insalyon.creatis.vip.core.server.security.apikey.SpringApiPrincipal;
 import fr.insalyon.creatis.vip.core.client.bean.Group;
 import fr.insalyon.creatis.vip.core.client.bean.User;
@@ -18,6 +19,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.web.SpringJUnitWebConfig;
 import org.springframework.test.web.servlet.MockMvc;
@@ -35,13 +37,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 Functional test with the vip-portal configuration, so very close from
 the production one. Do tests on the api.
  */
-@SpringJUnitWebConfig(value = SpringCoreConfig.class)
+//@SpringJUnitWebConfig(value = SpringCoreConfig.class)
+@SpringJUnitWebConfig(value = SpringRestApiConfig.class)
 @ActiveProfiles({"test-db", "test"}) // to take random h2 database and not the test h2 jndi one
 @TestPropertySource(properties = {
         "db.tableEngine=",             // to disable the default mysql/innodb engine on database init
         "db.jsonType=TEXT",            // to workaround h2/mysql differences on JSON type
         "vipConfigFolder=classpath:"}) // also configure the vip conf files to be searched in classpath
 @Transactional
+@ContextConfiguration(classes = { SpringRestApiConfig.class }) // XXX nope
 public class VipWebConfigurationIT {
 
     @Autowired

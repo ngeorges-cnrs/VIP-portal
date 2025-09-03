@@ -31,12 +31,14 @@
  */
 package fr.insalyon.creatis.vip.api.rest.itest.processing;
 
+import fr.insalyon.creatis.vip.api.SpringRestApiConfig;
 import fr.insalyon.creatis.vip.core.server.exception.ApiException.ApiError;
 import fr.insalyon.creatis.vip.api.rest.config.BaseWebSpringIT;
 import fr.insalyon.creatis.vip.application.client.bean.AppVersion;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ContextConfiguration;
 
 import static fr.insalyon.creatis.vip.api.data.PipelineTestUtils.*;
 import static fr.insalyon.creatis.vip.api.data.UserTestUtils.*;
@@ -45,6 +47,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+// @ContextConfiguration(classes = { SpringRestApiConfig.class })
 public class PipelineControllerIT extends BaseWebSpringIT {
 
     @BeforeEach

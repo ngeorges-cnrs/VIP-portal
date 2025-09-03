@@ -22,6 +22,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.LazyConnectionDataSourceProxy;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.bind.annotation.RestController;
@@ -52,11 +53,14 @@ import static org.springframework.util.ResourceUtils.CLASSPATH_URL_PREFIX;
  */
 @Configuration
 @EnableTransactionManagement
+@EnableWebMvc
 @ComponentScan(
         basePackages = "fr.insalyon.creatis.vip",
         excludeFilters = {
                 // @ComponentScan.Filter(type=FilterType.REGEX, pattern="fr\\.insalyon\\.creatis\\.vip\\.api\\..*"), XXX fails test
-                @ComponentScan.Filter(type = FilterType.ANNOTATION, value = RestController.class)
+                @ComponentScan.Filter(type = FilterType.ANNOTATION, value = RestController.class),
+                @ComponentScan.Filter(type = FilterType.ANNOTATION, value = EnableWebMvc.class)
+                //,@ComponentScan.Filter(type = FilterType.ANNOTATION, value = EnableWebSecurity.class)
         }
 )
 public class SpringCoreConfig {
