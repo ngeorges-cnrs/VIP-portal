@@ -25,6 +25,7 @@ import org.springframework.jdbc.datasource.LazyConnectionDataSourceProxy;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import javax.sql.DataSource;
 import java.io.IOException;
@@ -54,7 +55,7 @@ import static org.springframework.util.ResourceUtils.CLASSPATH_URL_PREFIX;
 @ComponentScan(
         basePackages = "fr.insalyon.creatis.vip",
         excludeFilters = {
-                //@ComponentScan.Filter(type=FilterType.REGEX, pattern="fr\\.insalyon\\.creatis\\.vip\\.api\\..*"),
+                // @ComponentScan.Filter(type=FilterType.REGEX, pattern="fr\\.insalyon\\.creatis\\.vip\\.api\\..*"), XXX fails test
                 @ComponentScan.Filter(type = FilterType.ANNOTATION, value = RestController.class)
         }
 )

@@ -19,7 +19,7 @@ import java.util.Date;
 
 import static fr.insalyon.creatis.vip.core.client.view.user.UserLevel.Beginner;
 
-@WebAppConfiguration // XXX already in BaseSpringIT ?
+// @WebAppConfiguration // XXX already in BaseSpringIT ? - no impact on tests
 public class ApiUserBusinessIT extends BaseSpringIT {
 
     @Autowired private ApiUserBusiness apiUserBusiness;
