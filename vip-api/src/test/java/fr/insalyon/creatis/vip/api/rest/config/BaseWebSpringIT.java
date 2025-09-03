@@ -77,7 +77,7 @@ import java.nio.charset.StandardCharsets;
  * * use {@link WithMockUser} annotation
  * <p>
  */
-@WebAppConfiguration
+@WebAppConfiguration // XXX already in BaseSpringIT ?
 abstract public class BaseWebSpringIT extends BaseApplicationSpringIT {
 
     @Autowired

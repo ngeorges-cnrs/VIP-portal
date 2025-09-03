@@ -24,6 +24,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.test.context.web.WebAppConfiguration;
 
 import javax.sql.DataSource;
 import java.util.ArrayList;
@@ -53,6 +54,7 @@ import static org.mockito.ArgumentMatchers.anyString;
         "db.jsonType=TEXT",            // to workaround h2/mysql differences on JSON type
         "vipConfigFolder=classpath:"}) // to find vip-api.conf for vip-api tests
 @Transactional // each test is in a transaction that is rollbacked at the end to always leave a "clean" state
+@WebAppConfiguration
 public abstract class BaseSpringIT {
     
     @Autowired @Qualifier("db-datasource") protected DataSource dataSource; // this is a mockito spy wrapping the h2 memory datasource

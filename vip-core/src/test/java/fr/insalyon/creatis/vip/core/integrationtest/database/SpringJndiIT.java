@@ -26,6 +26,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
@@ -68,6 +69,7 @@ import static org.mockito.ArgumentMatchers.*;
         "db.jsonType=TEXT" })  // to workaround h2/mysql differences on JSON type
 @TestMethodOrder(OrderAnnotation.class)
 @ActiveProfiles({"jndi-db", "test"}) // to use default jndi datasource but avoid default server config
+@WebAppConfiguration
 public class SpringJndiIT {
 
     @Autowired private ConfigurationBusiness configurationBusiness;
