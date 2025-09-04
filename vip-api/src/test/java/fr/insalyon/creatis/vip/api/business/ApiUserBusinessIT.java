@@ -1,5 +1,7 @@
 package fr.insalyon.creatis.vip.api.business;
 
+import fr.insalyon.creatis.vip.api.SpringRestApiConfig;
+import fr.insalyon.creatis.vip.core.server.SpringCoreConfig;
 import fr.insalyon.creatis.vip.core.server.exception.ApiException;
 import fr.insalyon.creatis.vip.core.client.bean.Group;
 import fr.insalyon.creatis.vip.core.client.bean.GroupType;
@@ -12,12 +14,16 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.web.SpringJUnitWebConfig;
 
 import java.sql.Timestamp;
 import java.util.Date;
 
 import static fr.insalyon.creatis.vip.core.client.view.user.UserLevel.Beginner;
 
+// @SpringJUnitWebConfig(value = { SpringRestApiConfig.class })
+@ContextConfiguration(classes = {SpringRestApiConfig.class})
 public class ApiUserBusinessIT extends BaseSpringIT {
 
     @Autowired private ApiUserBusiness apiUserBusiness;
