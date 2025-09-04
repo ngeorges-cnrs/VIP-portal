@@ -31,14 +31,13 @@
  */
 package fr.insalyon.creatis.vip.integrationtest;
 
-import fr.insalyon.creatis.vip.api.SpringRestApiConfig;
 import fr.insalyon.creatis.vip.api.controller.PlatformController;
 import fr.insalyon.creatis.vip.core.server.exception.ApiException;
 import fr.insalyon.creatis.vip.core.server.SpringCoreConfig;
+import fr.insalyon.creatis.vip.api.SpringRestApiConfig;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.web.SpringJUnitWebConfig;
 import org.springframework.util.Assert;
 
@@ -50,14 +49,11 @@ import java.nio.file.Paths;
  * Test the the global spring configuration, almost nothing is mocked
  *
  */
-//@SpringJUnitWebConfig(SpringCoreConfig.class)
-@SpringJUnitWebConfig(SpringRestApiConfig.class) // XXX nope
-@ContextConfiguration(classes = { SpringRestApiConfig.class }) // XXX nope
+@SpringJUnitWebConfig(value = { SpringRestApiConfig.class, SpringCoreConfig.class })
 public class DefaultSpringConfigurationIT {
 
     @Autowired
     private PlatformController platformController;
-
 
     @BeforeAll
     static void configureHomePath() throws Exception {
