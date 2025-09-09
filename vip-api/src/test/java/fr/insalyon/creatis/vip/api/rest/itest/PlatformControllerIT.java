@@ -31,6 +31,7 @@
  */
 package fr.insalyon.creatis.vip.api.rest.itest;
 
+import fr.insalyon.creatis.vip.core.server.CarminProperties;
 import fr.insalyon.creatis.vip.core.server.exception.ApiException.ApiError;
 import fr.insalyon.creatis.vip.core.server.model.Module;
 import fr.insalyon.creatis.vip.core.server.model.SupportedTransferProtocol;
@@ -39,6 +40,7 @@ import fr.insalyon.creatis.vip.application.client.view.ApplicationException.Appl
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.http.MediaType;
 
 import java.util.Arrays;
@@ -47,7 +49,9 @@ import java.util.function.Function;
 
 import static fr.insalyon.creatis.vip.api.data.CarminAPITestConstants.*;
 import static fr.insalyon.creatis.vip.api.data.ErrorCodeAndMessageTestUtils.jsonCorrespondsToErrorCodeAndMessage;
+import static fr.insalyon.creatis.vip.core.server.CarminProperties.*;
 import static org.hamcrest.Matchers.*;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -68,6 +72,16 @@ public class PlatformControllerIT extends BaseWebSpringIT {
 
     @Test
     public void testPlatformProperties() throws Exception {
+        when(server.getEnvProperty(PLATFORM_NAME)).thenReturn(TEST_PLATFORM_NAME);
+        when(server.getEnvProperty(PLATFORM_DESCRIPTION)).thenReturn(TEST_PLATFORM_DESCRIPTION);
+        when(server.getEnvProperty(PLATFORM_EMAIL)).thenReturn(TEST_PLATFORM_EMAIL);
+        when(server.getEnvProperty(SUPPORTED_TRANSFER_PROTOCOLS, SupportedTransferProtocol[].class)).thenReturn(TEST_SUPPORTED_PROTOCOLS);
+        when(server.getEnvProperty(SUPPORTED_MODULES, Module[].class)).thenReturn(TEST_SUPPORTED_MODULES);
+        when(server.getEnvProperty(DEFAULT_LIMIT_LIST_EXECUTION, Long.class)).thenReturn(Long.valueOf(TEST_DEFAULT_LIST_LIMIT));
+        when(server.getEnvProperty(UNSUPPORTED_METHODS, String[].class)).thenReturn(TEST_UNSUPPORTED_METHOD);
+        when(server.getEnvProperty(API_DATA_TRANSFERT_MAX_SIZE, Long.class)).thenReturn(Long.valueOf(TEST_DATA_MAX_SIZE));
+        when(server.getEnvProperty(SUPPORTED_API_VERSION)).thenReturn(TEST_SUPPORTED_API_VERSION);
+
         // the test properties are set in BaseVIPSpringIT (with @TestPropertySource)
         mockMvc.perform(get("/rest/platform"))
                 .andDo(print())

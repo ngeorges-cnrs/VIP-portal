@@ -420,4 +420,18 @@ public class SpringConfigServer implements Server {
     public String getHostURL() {
         return env.getRequiredProperty(CoreConstants.HOST_URL);
     }
+
+    @Override
+    public String getEnvProperty(String key) {
+        // XXX dedicated helpers ?
+        return env.getProperty(key);
+    }
+    @Override
+    public <T> T getEnvProperty(String key, Class<T> targetType, T defaultValue) {
+        return env.getProperty(key, targetType, defaultValue);
+    }
+    @Override
+    public <T> T getEnvProperty(String key, Class<T> targetType) {
+        return env.getProperty(key, targetType);
+    }
 }

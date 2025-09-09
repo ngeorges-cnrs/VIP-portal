@@ -41,6 +41,7 @@ import fr.insalyon.creatis.vip.api.SpringRestApiConfig;
 import fr.insalyon.creatis.vip.application.server.business.*;
 import fr.insalyon.creatis.vip.application.server.business.util.FileUtil;
 import fr.insalyon.creatis.vip.core.integrationtest.ServerMockConfig;
+import fr.insalyon.creatis.vip.core.server.CarminProperties;
 import fr.insalyon.creatis.vip.core.server.business.BusinessException;
 import fr.insalyon.creatis.vip.core.server.business.ConfigurationBusiness;
 import fr.insalyon.creatis.vip.core.server.dao.UserDAO;
@@ -102,6 +103,11 @@ abstract public class BaseWebSpringIT extends BaseApplicationSpringIT {
     protected GRIDAClient gridaClient;
     @Autowired
     protected WorkflowExecutionBusiness workflowExecutionBusiness;
+
+    //public BaseWebSpringIT() {
+//        super();
+//        Mockito.when(server.getEnvProperty(CarminProperties.APIKEY_HEADER_NAME)).thenReturn("testapikey");
+//    }
 
     @BeforeEach
     @Override

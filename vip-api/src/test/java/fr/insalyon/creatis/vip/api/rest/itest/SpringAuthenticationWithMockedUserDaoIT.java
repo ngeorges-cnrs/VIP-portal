@@ -70,6 +70,7 @@ public class SpringAuthenticationWithMockedUserDaoIT extends BaseWebSpringIT {
     public void authenticationWithCoreKo() throws Exception {
         Mockito.when(getUserDAO().getUserByApikey("apikeyvalue"))
                 .thenThrow(new RuntimeException("hey hey"));
+        // XXX MockServer ?
         mockMvc.perform(get("/rest/wrongUrl")
                 .with(ApikeyRequestPostProcessor.apikey("testapikey", "apikeyvalue")))
                 .andDo(print())
