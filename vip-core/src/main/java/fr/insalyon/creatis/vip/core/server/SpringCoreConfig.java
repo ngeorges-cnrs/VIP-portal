@@ -26,6 +26,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.sql.DataSource;
 import java.io.IOException;
@@ -61,7 +62,8 @@ import static org.springframework.util.ResourceUtils.CLASSPATH_URL_PREFIX;
         basePackages = "fr.insalyon.creatis.vip",
         excludeFilters = {
                 @ComponentScan.Filter(type = FilterType.ANNOTATION, value = RestController.class),
-                @ComponentScan.Filter(type = FilterType.ANNOTATION, value = EnableWebMvc.class)
+                @ComponentScan.Filter(type = FilterType.ANNOTATION, value = EnableWebMvc.class),
+                @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = WebMvcConfigurer.class),
         }
 )
 public class SpringCoreConfig {

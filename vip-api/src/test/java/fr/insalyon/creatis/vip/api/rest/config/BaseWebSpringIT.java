@@ -117,6 +117,7 @@ abstract public class BaseWebSpringIT extends BaseApplicationSpringIT {
                 .build();
 
         // vip.conf API properties mocks
+        when(server.getCarminCorsAuthorizedDomains()).thenReturn(new String[]{});
         when(server.getCarminPlatformName()).thenReturn(TEST_PLATFORM_NAME);
         when(server.getCarminPlatformDescription()).thenReturn(TEST_PLATFORM_DESCRIPTION);
         when(server.getCarminPlatformEmail()).thenReturn(TEST_PLATFORM_EMAIL);
